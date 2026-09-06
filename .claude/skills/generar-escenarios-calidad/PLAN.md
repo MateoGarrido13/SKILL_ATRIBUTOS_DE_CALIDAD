@@ -1,4 +1,4 @@
-# PLAN — skill-generar-escenarios-calidad
+# PLAN — generar-escenarios-calidad
 
 ## Problema que resuelve
 Corresponde al inciso **i)** del ejercicio 4 de TP3: "generar atributos de calidad de acuerdo con los templates de 6 partes del SEI". Dada una descripción de un sistema o de un requerimiento no funcional en lenguaje natural, la skill redacta uno o más escenarios de atributos de calidad completos, usando el template de 6 partes del SEI (estímulo, fuente del estímulo, artefacto, entorno, respuesta, medida de la respuesta).

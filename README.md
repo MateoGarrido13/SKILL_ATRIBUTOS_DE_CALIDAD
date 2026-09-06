@@ -8,11 +8,13 @@ Encapsular en 3 Claude Skills reutilizables el proceso de diseño de atributos d
 
 ## Las 3 skills
 
+Viven en `.claude/skills/`, el formato nativo de **Agent Skills** que Claude Code auto-detecta — así son skills "estilo Claude" de verdad, tal como pide el enunciado del TP, y no una carpeta cualquiera con instrucciones.
+
 | Skill | Inciso del enunciado | Qué resuelve |
 |---|---|---|
-| [`skill-generar-escenarios-calidad/`](./skill-generar-escenarios-calidad/SKILL.md) | i) | Genera escenarios de atributos de calidad con el template de 6 partes del SEI a partir de una descripción de sistema en lenguaje natural. |
-| [`skill-chequear-completitud-escenario/`](./skill-chequear-completitud-escenario/SKILL.md) | ii) | Dado un escenario ya redactado, chequea si las 6 partes están presentes y bien definidas, y si falta alguna sugiere cómo completarla. |
-| [`skill-arbol-utilidad/`](./skill-arbol-utilidad/SKILL.md) | iii) | A partir de atributos de calidad y sus escenarios, arma un árbol de utilidad priorizado por impacto de negocio y dificultad técnica. |
+| [`.claude/skills/generar-escenarios-calidad/`](./.claude/skills/generar-escenarios-calidad/SKILL.md) | i) | Genera escenarios de atributos de calidad con el template de 6 partes del SEI a partir de una descripción de sistema en lenguaje natural. |
+| [`.claude/skills/chequear-completitud-escenario/`](./.claude/skills/chequear-completitud-escenario/SKILL.md) | ii) | Dado un escenario ya redactado, chequea si las 6 partes están presentes y bien definidas, y si falta alguna sugiere cómo completarla. |
+| [`.claude/skills/arbol-utilidad/`](./.claude/skills/arbol-utilidad/SKILL.md) | iii) | A partir de atributos de calidad y sus escenarios, arma un árbol de utilidad priorizado por impacto de negocio y dificultad técnica. |
 
 ## Flujo sugerido de uso conjunto
 
@@ -64,39 +66,42 @@ Son dos cosas distintas, aunque ambas viven en `docs/` de cada skill:
 ```
 skill-tp-atributos-calidad/
 ├── .gitignore
+├── LICENSE
 ├── README.md
+│
+├── .claude/
+│   └── skills/
+│       ├── generar-escenarios-calidad/
+│       │   ├── SKILL.md
+│       │   ├── PLAN.md
+│       │   └── docs/
+│       │       ├── conocimiento/
+│       │       │   └── heuristica-inferencia.md
+│       │       └── condiciones/
+│       │           └── condiciones.md
+│       │
+│       ├── chequear-completitud-escenario/
+│       │   ├── SKILL.md
+│       │   ├── PLAN.md
+│       │   └── docs/
+│       │       ├── conocimiento/
+│       │       │   └── rubric-completitud.md
+│       │       └── condiciones/
+│       │           └── condiciones.md
+│       │
+│       └── arbol-utilidad/
+│           ├── SKILL.md
+│           ├── PLAN.md
+│           └── docs/
+│               ├── conocimiento/
+│               │   └── criterio-priorizacion.md
+│               └── condiciones/
+│                   └── condiciones.md
 │
 ├── shared/
 │   ├── template-6-partes-sei.md
 │   ├── glosario-atributos-calidad.md
 │   └── metodo-arbol-utilidad.md
-│
-├── skill-generar-escenarios-calidad/
-│   ├── SKILL.md
-│   ├── PLAN.md
-│   └── docs/
-│       ├── conocimiento/
-│       │   └── heuristica-inferencia.md
-│       └── condiciones/
-│           └── condiciones.md
-│
-├── skill-chequear-completitud-escenario/
-│   ├── SKILL.md
-│   ├── PLAN.md
-│   └── docs/
-│       ├── conocimiento/
-│       │   └── rubric-completitud.md
-│       └── condiciones/
-│           └── condiciones.md
-│
-├── skill-arbol-utilidad/
-│   ├── SKILL.md
-│   ├── PLAN.md
-│   └── docs/
-│       ├── conocimiento/
-│       │   └── criterio-priorizacion.md
-│       └── condiciones/
-│           └── condiciones.md
 │
 └── tests-no-leer/
     ├── caso-01-monopatines/          (6 archivos: generar/chequear/árbol × input/expected)
@@ -105,18 +110,20 @@ skill-tp-atributos-calidad/
     └── caso-04-sap-arbol-healthcare/ (2 archivos: árbol × input/expected)
 ```
 
+Cada `SKILL.md` referencia `shared/` con rutas relativas de 3 niveles (`../../../shared/...`), porque `.claude/skills/<nombre>/SKILL.md` queda 3 carpetas por debajo de la raíz del repo.
+
 ## Estado del proyecto
 
 **Completo:**
-- Estructura de carpetas y nombres definitivos (kebab-case).
+- Estructura de carpetas y nombres definitivos (kebab-case), con las 3 skills reorganizadas al formato nativo `.claude/skills/<nombre>/` que Claude Code auto-detecta.
 - `shared/` con la base teórica de las 3 skills.
 - `docs/condiciones/` y `docs/conocimiento/` de las 3 skills.
 - `tests-no-leer/` con los 4 casos (16 archivos en total).
-- Los 3 `SKILL.md` con el cuerpo real de instrucciones.
+- Los 3 `SKILL.md` con el cuerpo real de instrucciones, con todas las rutas relativas verificadas.
+- Repo commiteado y subido a la rama `yaco` del remoto del equipo.
 
 **Pendiente:**
 - Correr los 4 casos de `tests-no-leer/` contra las skills reales (invocarlas con cada `*-input.md` y comparar el resultado contra el `*-expected.md` correspondiente) para validar que coinciden.
-- Commit y subida del repo a git (todavía no se inicializó ni se hizo ningún commit).
 
 ## `.gitignore`
 

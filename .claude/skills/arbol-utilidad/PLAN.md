@@ -1,11 +1,11 @@
-# PLAN — skill-arbol-utilidad
+# PLAN — arbol-utilidad
 
 ## Problema que resuelve
 Corresponde al inciso **iii)** del ejercicio 4 de TP3: "elaborar un árbol de utilidad". Dado un conjunto de atributos de calidad identificados y sus escenarios (idealmente ya generados y validados por las otras dos skills), la skill arma un árbol de utilidad (utility -> atributos de calidad -> sub-características -> escenarios) y prioriza cada escenario según impacto de negocio y dificultad técnica.
 
 ## Inputs que recibe del usuario
 - Lista de atributos de calidad relevantes para el sistema.
-- Escenarios asociados a esos atributos (generados con `skill-generar-escenarios-calidad` y, opcionalmente, ya validados con `skill-chequear-completitud-escenario`).
+- Escenarios asociados a esos atributos (generados con `generar-escenarios-calidad` y, opcionalmente, ya validados con `chequear-completitud-escenario`).
 - Opcionalmente, criterios de priorización propios del negocio (ej. qué atributo es más crítico para el cliente).
 
 ## Fuente de conocimiento base

@@ -1,4 +1,4 @@
-# PLAN — skill-chequear-completitud-escenario
+# PLAN — chequear-completitud-escenario
 
 ## Problema que resuelve
 Corresponde al inciso **ii)** del ejercicio 4 de TP3: "chequear si un escenario dado está completo, y en caso de no estarlo cómo podría completarse". Dado un escenario de atributo de calidad ya redactado (por el usuario, por otra skill, o extraído de un TP), la skill evalúa si las 6 partes del template del SEI están presentes y bien definidas, y si falta o está ambigua alguna, propone cómo completarla.
@@ -19,7 +19,7 @@ Corresponde al inciso **ii)** del ejercicio 4 de TP3: "chequear si un escenario 
 **Nota:** *Software Architecture in Practice* (Bass/Clements/Kazman) es la fuente original del template de 6 partes, ya cubierta por completo en el Notion migrado — no hizo falta agregar complemento propio del libro. `caps4-5-keeling.pdf` (Design It!, Michael Keeling) no es fuente de ninguno de los archivos de `shared/`.
 
 ## Condiciones / reglas de la skill
-Ver `docs/condiciones/condiciones.md`: los mismos 8 tips prácticos de Notion, reescritos como criterios de **detección** al revisar un escenario ya redactado ("marcá como incompleto/mal clasificado si..."), a diferencia de `skill-generar-escenarios-calidad` donde están redactados como reglas de "evitar al construir".
+Ver `docs/condiciones/condiciones.md`: los mismos 8 tips prácticos de Notion, reescritos como criterios de **detección** al revisar un escenario ya redactado ("marcá como incompleto/mal clasificado si..."), a diferencia de `generar-escenarios-calidad` donde están redactados como reglas de "evitar al construir".
 
 ## Ejemplos conocidos (testeo)
 El enunciado de TP3 pide explícitamente que "la skill debe ser testeada con ejemplos conocidos". Los casos de prueba viven en `tests-no-leer/` (la skill nunca debe leerlos) y son:
