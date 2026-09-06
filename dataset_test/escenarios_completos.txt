@@ -1,0 +1,44 @@
+## A. ESCENARIOS COMPLETOS (extraídos y desglosados del libro)
+
+### A.1 Disponibilidad 
+- **Fuente**: Servidor de una granja de servidores (server farm)
+- **Estímulo**: Fallo del servidor
+- **Artefacto**: Servidor
+- **Entorno**: Operación normal
+- **Respuesta**: El sistema notifica al operador y continúa operando sin interrupción
+- **Medida de Respuesta**: 0 minutos de inactividad (no downtime)
+- **Estado**: VÁLIDO — 6/6 partes presentes, medida cuantificable.
+
+### A.2 Seguridad 
+- **Fuente**: Empleado interno descontento, con acceso remoto
+- **Estímulo**: Intento de modificación no autorizada de la tabla de sueldos
+- **Artefacto**: Base de datos
+- **Entorno**: Operación normal
+- **Respuesta**: El acceso no autorizado es detectado y registrado en una bitácora de auditoría
+- **Medida de Respuesta**: Restauración de los datos correctos en ≤ 1 día
+- **Estado**: VÁLIDO — 6/6 partes presentes, medida cuantificable.
+
+### A.3 Testability 
+- **Fuente**: Desarrollador
+- **Estímulo**: Finalización de una unidad de código
+- **Artefacto**: Unidad de código
+- **Entorno**: Fase de desarrollo
+- **Respuesta**: Ejecución de una secuencia de pruebas
+- **Medida de Respuesta**: ≥85% de cobertura de rutas (path coverage) en ≤30 minutos
+- **Estado**: VÁLIDO — 6/6 partes presentes, medida cuantificable.
+
+
+### A.4 Interoperabilidad (integración con pasarelas de pago externas)
+ESTADO: COMPLETO (6/6 partes presentes y verificables)
+
+- **Fuente**: Pasarela de pago externa (ej. Mercado Pago)
+- **Estímulo**: Envío de una notificación de confirmación de pago (webhook)
+- **Artefacto**: Módulo de procesamiento de pagos de la app
+- **Entorno**: Operación normal, con múltiples pasarelas de pago integradas simultáneamente
+- **Respuesta**: El sistema interpreta correctamente el estado del pago (aprobado/rechazado/
+  pendiente), sin importar qué pasarela lo envíe
+- **Medida de Respuesta**: 99.9% de las notificaciones de pago se interpretan correctamente, sin importar el formato o codificación de estado que use cada pasarela
+
+NOTA DE DOMINIO: falla típica de interoperabilidad semántica = mismo significado
+("pago aprobado") representado con distinto código por cada proveedor (ej. "approved"
+vs. "succeeded"); requiere capa de normalización (adapter / anti-corruption layer).

@@ -1,0 +1,7 @@
+---
+description: Toma escenarios validados y genera el Árbol de Utilidad renderizándolo estrictamente con docs/templates/template_arbol.md: tabla de Atributo de Calidad, Refinamiento, Escenario, Prioridad y Dificultad (H/M/L confirmadas por el stakeholder).
+globs: "docs/arquitectura/3-arbol-utilidad/*.md"
+alwaysApply: false
+---
+# Skill iii: Constructor de Árbol de Utilidad
+(El prompt determinístico se desarrollará en el siguiente paso)

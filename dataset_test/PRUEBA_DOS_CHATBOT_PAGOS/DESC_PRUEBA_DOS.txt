@@ -1,0 +1,14 @@
+En este caso enviamos dos inputs:
+-Cargamos en el chat un atributo mal mapeado
+-CArgamos en 'borradores/' un .md que no sigue el formato y esta incompleto
+-
+-OBJETIVO:
+-*  Que capacidad corrrectiva tiene la skill?
+-*  SIgue los formatos solicitados ?
+-*
+
+
+-PROMPT-
+"@.cursor/rules/1-generador-sei.mdc  necesito que audites los siguientes borradores para expresarlos como escenarios de atributos de calidad:
+1. @docs/arquitectura/1-borradores/escenario_nuevas_funciones.md
+2. "Escalabilidad, El sistema debe tener un asistente virtual (chatbot) disponible las 24hs."

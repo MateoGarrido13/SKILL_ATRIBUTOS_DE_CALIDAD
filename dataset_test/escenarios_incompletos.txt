@@ -1,0 +1,85 @@
+### B.1 Falta ENTORNO (Environment), sencillo
+- **Fuente**: Usuario final
+- **Estímulo**: Envía una solicitud de consulta de saldo
+- **Artefacto**: Servicio de consulta de cuenta
+- **Entorno**: **[AUSENTE]**
+- **Respuesta**: El sistema procesa la solicitud y devuelve el resultado
+- **Medida de Respuesta**: < 2 segundos
+- **Defecto**: no se especifica bajo qué condición operacional aplica el umbral (¿operación normal, carga pico, modo degradado?). Sin Entorno, la Medida de Respuesta es ambigua e inverificable en la práctica (comparar con patrón real del libro: "bajo carga pico" en escenario de Performance de Table 19.1).
+- **Acción esperada de la Skill**: marcar escenario como INCOMPLETO; solicitar/inferir Entorno antes de aceptar el ASR.
+
+### B.2 MEDIDA DE RESPUESTA inválida (no cuantificable)
+- **Fuente**: Servidor de base de datos
+- **Estímulo**: Fallo del servidor
+- **Artefacto**: Servidor de base de datos
+- **Entorno**: Operación normal
+- **Respuesta**: El sistema detecta la falla, notifica al operador y restaura el servicio
+- **Medida de Respuesta**: **"rápidamente, con normalidad"** — **[INVÁLIDA]**
+- **Defecto**: adjetivo subjetivo sin umbral numérico ni unidad de medida; no permite veredicto pasa/no-pasa. Contrastar con medida válida equivalente real del libro: "restaurado con hot-swap, sin downtime" o "restaurado en ≤1 día".
+- **Acción esperada de la Skill**: rechazar el escenario como no-testeable; exigir reformulación con unidad cuantificable (tiempo, %, tasa) antes de incorporarlo al Árbol de Utilidad.
+
+
+
+
+### B.2 MEDIDA DE RESPUESTA inválida (ausente) ejemplo de filmina (incompleto a propósito)
+
+> EScalabilidad
+
+> "El sistema debe ser capaz de gestionar despliegues de hasta 1000 dispositivos, que pueden generar un gran volumen de eventos, sin degradar sus tiempos de procesamiento."
+>
+
+| **Fuente del estímulo** | Los dispositivos externos conectados al sistema |
+| --- | --- |
+| **Estímulo** | Incremento en el número de dispositivos desplegados (hasta 1000), generando un gran volumen de eventos |
+| **Artefacto** | El módulo de procesamiento de eventos (implícito) |
+| **Ambiente** | Sistema en operación, con despliegue creciente de dispositivos (implícito) |
+| **Respuesta** | El sistema continúa procesando los eventos |
+| **Medida de respuesta** | **No especificada con precisión** — dice "sin degradar sus tiempos de procesamiento" pero no da un número concreto |
+
+* falta un valor numérico en la medida de respuesta.
+
+# Armando un escenario completo desde cero
+
+**Contexto ficticio:** plataforma de monitoreo de sensores IoT para una empresa de logística. El stakeholder dice: *"Hoy tenemos 200 camiones con sensores. El plan de negocio es escalar a 5000 camiones en 2 años. Me preocupa que el sistema no aguante ese crecimiento."*
+
+| **Fuente del estímulo** | Sensores IoT de los camiones |
+| --- | --- |
+| **Estímulo** | El número de dispositivos activos crece de 200 a 5000, generando un aumento proporcional en el volumen de eventos (mensajes de posición/estado) enviados al sistema |
+| **Artefacto** | El servicio de ingesta de eventos (*event ingestion service*) y la base de datos de series temporales |
+| **Ambiente** | Sistema en operación normal, durante el proceso gradual de escalado de la flota a lo largo de 2 años |
+| **Respuesta** | El sistema sigue ingiriendo y procesando todos los eventos de posición sin pérdida de datos ni degradación perceptible |
+| **Medida de respuesta** | -- |
+
+## Definiendo la medida de respuesta: absoluta vs. relativa
+
+Una medida **absoluta** simple sería: *"el tiempo de procesamiento por evento se mantiene por debajo de 500 ms en el percentil 95, con 0% de eventos perdidos, soportando hasta 5000 dispositivos enviando datos cada 10 segundos (≈500 eventos/segundo en pico)".*
+
+Pero en Escalabilidad tiene mucho sentido usar también (o en combinación) una medida **relativa**, que compara el comportamiento con carga alta contra el comportamiento con carga baja (el *baseline*):
+
+> *"El tiempo de procesamiento por evento con 5000 dispositivos no debe superar en más de un 10% el tiempo de procesamiento observado con 200 dispositivos."*
+>
+
+<aside>
+⚖️
+
+**Por qué la medida relativa tiene sentido en Escalabilidad**
+
+Recordando la definición: la cuestión en Escalabilidad no es "¿es rápido?" (eso es Performance), sino "¿se mantiene igual de rápido a medida que crece la carga?". Una medida relativa captura mejor esa esencia:
+
+1. **Aisla el efecto de escalar** de otras variables (hardware, red, etc.) que una medida absoluta aislada no distingue.
+2. **Es más fácil de defender** frente a un stakeholder que no sabe si "500ms" es mucho o poco, pero sí entiende "que no empeore más de un 10%".
+3. **Sirve como criterio de aceptación en testing de carga**: se corre el sistema con 200 dispositivos, se mide, después se simulan 5000, se mide de nuevo, y se compara la diferencia porcentual.
+
+**El matiz importante — combinar ambas:** una medida puramente relativa tiene un punto débil: si el baseline ya es malo, "mantenerse igual" no salva nada. Por ejemplo, si con 200 dispositivos el sistema ya tarda 3 segundos, "no degradarse más de un 10%" deja un sistema que sigue siendo lento (3.3 seg) — cumple la medida relativa, pero el negocio sigue insatisfecho. Por eso, la medida más robusta combina las dos:
+
+> *"El tiempo de procesamiento por evento con 5000 dispositivos activos no debe superar en más de un 10% el tiempo observado con 200 dispositivos, y en ningún caso debe exceder los 500 ms en el percentil 95."*
+>
+
+Esto da lo mejor de ambos mundos: la parte relativa mide específicamente el impacto de escalar, y la parte absoluta garantiza que el punto de partida también sea aceptable.
+
+</aside>
+
+## Escenario final completo
+
+> *"Cuando el número de sensores IoT activos en los camiones crece de 200 a 5000 (generando hasta ~500 eventos por segundo en los picos), el servicio de ingesta de eventos y la base de datos de series temporales deben seguir procesando todos los eventos sin pérdida de datos, manteniendo un tiempo de procesamiento por evento que no se degrade más de un 10% respecto al observado con 200 dispositivos, y que en ningún caso supere los 500 ms en el percentil 95."*
+>

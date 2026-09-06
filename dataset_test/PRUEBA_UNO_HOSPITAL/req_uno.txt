@@ -1,0 +1,1 @@
+El sistema de gestión de turnos del hospital tiene que ser seguro para que no entren intrusos, y además tiene que andar bien cuando hay mucha gente sacando turnos al mismo tiempo porque si se cuelga nos matan.

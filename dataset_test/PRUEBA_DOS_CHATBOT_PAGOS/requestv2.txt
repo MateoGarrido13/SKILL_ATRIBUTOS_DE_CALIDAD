@@ -1,0 +1,9 @@
+Para el escenario de las nuevas funciones:
+1.incluye pasarelas externas como "Mercado pago"
+2. Estas cuestiones seran vistas en el desarrollo antes de que el sistema este en produccion
+3. Lo vamos a expresar en modulos y/o artefactos que deben modificarse bajo el umbral de 8 de estos  modulos
+
+Para el chatbot  24hs:
+1. una falla a las 11pm ante multiples consultas de usuarios
+2.este compromiso debe estar tanto en degradado como  en cuestiones de mantenimiento; se acepta que responda una serie de preguntas acotadas por defecto ene stos casos y que informe que estamos teniendo inconvenientes
+3. Tras una caida esta disponible antes de 5 minutos

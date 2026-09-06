@@ -1,0 +1,39 @@
+---
+description: Genera escenarios de calidad del SEI (6 partes) a partir de borradores o texto libre, entregando siempre el escenario con las partes inferidas o incompletas marcadas y cerrando con preguntas para resolverlas.
+globs: "docs/arquitectura/1-borradores/*"
+alwaysApply: false
+---
+
+# Skill i: Generador de Escenarios SEI
+
+## Objetivo
+Transformar requerimientos en texto libre o borradores en **Escenarios de Calidad bajo el Template SEI de 6 partes** (Fuente, Estímulo, Artefacto, Ambiente, Respuesta, Medida de Respuesta).
+
+## Entrada
+El usuario aporta el requerimiento por cualquiera de estas dos vías, indistintamente:
+- Un archivo `.txt` o `.md` en `docs/arquitectura/1-borradores/`, sin estructura obligatoria.
+- Una descripción por chat, sin archivo previo. En ese caso, deja el `.md` resultante en `docs/arquitectura/1-borradores/`.
+
+Si la entrada fue un `.txt`, **no lo edites ni lo borres**: es el requerimiento original del usuario y el registro de su avance. Trabaja siempre sobre un `.md` aparte. Si la entrada ya era un `.md`, ese mismo archivo es el que reescribes en cada iteración.
+
+## Flujo Obligatorio de Operación (RAG Local)
+Antes de redactar, lee en este orden:
+1. `docs/referencia/teoria_sei.md` — definiciones de las 6 partes y criterios de validez de la Medida de Respuesta.
+2. `docs/referencia/Atributos de Calidad 3c62d4a554c581f5875de3690ef35a05.md` — clasificar el atributo de calidad.
+3. La ficha del atributo detectado en `docs/referencia/atributos/` — tácticas y consideraciones métricas específicas (medidas absolutas/relativas, *Straw Man*).
+
+## FORMATO DE RESPUESTA
+**Destinatario: el usuario final dueño del sistema.** Redacta sobre su sistema y sus decisiones pendientes. No menciones rutas ni nombres de archivos de la bibliografía, ni la lógica interna, los pasos o las etapas de las skills. La bibliografía es tu insumo, no tu tema.
+
+Entrega siempre dos bloques, en este orden, rellenando cada plantilla sin alterar su estructura:
+
+1. **El escenario** — `docs/templates/template_escenarios.md`, encabezado con `[ESTADO: BORRADOR]`. La etiqueta `[ESTADO: VALIDADO]` es el sello de la auditoría posterior: nunca la escribas.
+2. **Las preguntas** — `docs/templates/template_preguntas.md`, una por cada marca pendiente. Si hay marcas, hay preguntas.
+
+## Reglas de Contenido
+- **Un escenario por atributo de calidad.** Si el requerimiento mezcla dos, genera un archivo por cada uno.
+- Marca `[INFERIDO]` las partes que dedujiste y el usuario no afirmó; solo puedes inferir **Ambiente** y **Artefacto**.
+- Marca `[INCOMPLETO]` la Medida de Respuesta ausente o no cuantificable. En su pregunta, propone las **3 medidas más pertinentes** al caso concreto, con unidad y estadístico, dejando el umbral en manos del usuario.
+- **Nunca inventes valores numéricos.** Si propones un *Straw Man*, preséntalo como estimación provisional a confirmar.
+- **No asignes Prioridad ni Dificultad (H/M/L), ni emitas veredicto de ASR, tácticas o tradeoffs**: ese análisis pertenece a la etapa de priorización.
+- Con marcas pendientes el escenario permanece como un único `.md` en `docs/arquitectura/1-borradores/`. Cuando el usuario responde, reescríbelo sin marcas; si su respuesta abre una ambigüedad nueva, vuelve a marcarla y a preguntar. Una vez validado, el escenario existe únicamente en `docs/arquitectura/2-escenarios/`.
