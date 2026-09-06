@@ -1,0 +1,9 @@
+# Condiciones de proceso — skill-arbol-utilidad
+
+> Reglas destiladas de errores concretos cometidos al resolver los ejercicios 1 y 2 del TP (fuente: Notion, página "Atributos de Calidad (Tips Prácticos)"). Se incluyen solo los tips relacionados a clasificación/derivación correcta del atributo de calidad — son los que importan antes de ubicar un escenario en una rama del árbol de utilidad. Redactadas como **validación previa** a la priorización.
+
+1. **Validá que el escenario a ubicar sea realmente un atributo de calidad, no una regla de negocio.** Antes de colgarlo de una rama del árbol, aplicá el test: ¿qué se rompe si se saca la condición? Si lo que se rompe es una regla de negocio puntual, no lo incluyas en el árbol de utilidad como si fuera un atributo de calidad — no le corresponde una rama.
+
+2. **Validá que el escenario esté anclado en una característica concreta del sistema, no en una etiqueta suelta.** Antes de ubicarlo bajo un atributo de calidad del nivel 2, chequeá que el escenario señale qué característica específica del sistema (integración externa, hardware distribuido, datos sensibles, necesidad de cambio futuro, etc.) lo justifica. Un escenario sin esa evidencia concreta no está listo para entrar al árbol — hay que pedir que se lo derive del sistema completo antes de priorizarlo.
+
+3. **Validá que el atributo esté bien diferenciado de atributos solapados antes de asignarle una rama propia.** Si dos escenarios candidatos se apoyan en el mismo hecho del enunciado, verificá que cada uno tenga una evidencia distinta antes de crear dos ramas separadas en el árbol. Si no hay evidencia distinta, fusioná los escenarios en una sola hoja o dejá documentado por qué ameritan ramas separadas (tácticas o preocupación distintas) antes de asignarles prioridades (H/M/L) independientes.
