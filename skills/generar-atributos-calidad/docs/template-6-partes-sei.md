@@ -1,9 +1,5 @@
 # Escenarios de Calidad: el Template SEI de 6 Partes
 
-> Fuente: Notion "Escenarios de Calidad: el Template SEI de 6 Partes" y
-> subpáginas ("Ejercicios de la Filmina", "Escenario de Escalabilidad").
-> Basado en Clase 5 — Diseño de Sistemas de Software (J. Andrés Díaz Pace).
-
 El SEI propone capturar cada atributo de calidad como un **escenario**:
 una oración concreta, medible y testeable. Existe una variante del
 template por atributo, pero todas comparten el mismo esqueleto de 6
