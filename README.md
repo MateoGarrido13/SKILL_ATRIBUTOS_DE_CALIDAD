@@ -52,6 +52,6 @@ Genera un Utility Tree en formato de tabla Markdown con las columnas: Atributo d
 <output_format>
 REGLA CRÍTICA DE SISTEMA: Tu salida DEBE tener exactamente esta estructura, sin texto antes ni después:
 
-```markdown
+``markdown
 [TU RESPUESTA RESOLVIENDO LA TAREA AQUI]
 </output_format>
