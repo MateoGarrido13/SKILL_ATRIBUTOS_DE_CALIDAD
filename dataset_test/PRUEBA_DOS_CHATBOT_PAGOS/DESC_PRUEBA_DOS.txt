@@ -12,3 +12,7 @@ En este caso enviamos dos inputs:
 "@.cursor/rules/1-generador-sei.mdc  necesito que audites los siguientes borradores para expresarlos como escenarios de atributos de calidad:
 1. @docs/arquitectura/1-borradores/escenario_nuevas_funciones.md
 2. "Escalabilidad, El sistema debe tener un asistente virtual (chatbot) disponible las 24hs."
+
+- RESULTADOS -
+Fue capaz de reconocer el atributo de calidad mal identificado, sin embargo, para el otro borrador, adopto "Modificabilidad", en vez de "Integrabilidad";
+posible sesgo por el primer relato del usuario

@@ -1,7 +1,84 @@
 ---
-description: Toma escenarios validados y genera el Árbol de Utilidad renderizándolo estrictamente con docs/templates/template_arbol.md: tabla de Atributo de Calidad, Refinamiento, Escenario, Prioridad y Dificultad (H/M/L confirmadas por el stakeholder).
+description: Consolida escenarios validados en el Árbol de Utilidad (tabla de 5 columnas) solo cuando el usuario ya asignó Prioridad y Dificultad; mientras falte una etiqueta no construye nada y pregunta explicando qué significaría H, M o L en ese escenario. Declara taxonomía y alertas sin alterar la tabla y presenta evidencia de ASR para que el arquitecto dictamine.
 globs: "docs/arquitectura/3-arbol-utilidad/*.md"
 alwaysApply: false
 ---
+
 # Skill iii: Constructor de Árbol de Utilidad
-(El prompt determinístico se desarrollará en el siguiente paso)
+
+## Objetivo
+Consolidar los escenarios sellados en un **Árbol de Utilidad** priorizado. No hay una cuarta skill: esta regla absorbe la recolección de `(Prioridad, Dificultad)` y la evidencia de ASR. El etiquetado es **condición previa, no una columna a completar después**: primero el stakeholder asigna H/M/L a cada hoja, después se construye el árbol, y el arquitecto dictamina el impacto sobre la evidencia. Tu trabajo mientras falten etiquetas es *orientar al usuario para que las aporte*, explicándole qué significaría cada nivel en su escenario concreto.
+
+## Entrada
+Solo escenarios `.md` con `[ESTADO: VALIDADO]` en `docs/arquitectura/2-escenarios/`.
+- **Ignorá** borradores, `[INFERIDO]`, `[INCOMPLETO]`, `[ESTADO: BORRADOR]` y cualquier `.md` cuya Medida de Respuesta no sea cuantificable. No los reescribas acá: avisá al dueño del sistema que ese requerimiento todavía no está cerrado y no entra al árbol.
+- **No leas** `docs/arquitectura/1-borradores/` ni `dataset_test/` como insumo.
+- **Etiquetas `(Prioridad, Dificultad)`:** son un **insumo obligatorio**, no una salida. Buscalas, en este orden, en el archivo del árbol abierto, en el chat, o en una anotación H/M/L ya escrita en el `.md` validado. Si falta alguna, **no construyas el árbol**: aplicá la compuerta de abajo. No las inventes ni las dejes pendientes dentro de una tabla.
+
+## Compuerta de etiquetado (el árbol no se construye sin las dos etiquetas)
+El árbol se emite **solo** cuando cada hoja tiene Prioridad **y** Dificultad. Alcanza que falte una sola celda de una sola hoja para que la compuerta esté cerrada. Con la compuerta cerrada:
+
+- **No escribas ni reescribas** ningún `.md` de `docs/arquitectura/3-arbol-utilidad/`. El archivo queda exactamente como estaba.
+- **No emitas la tabla de cinco columnas**, ni completa, ni parcial, ni con celdas `[H/M/L]`, ni "para que el usuario la vaya viendo". Tampoco el párrafo de taxonomía, ni cobertura, ni alertas `(H, H)`, ni evidencia de ASR.
+- **No adelantes agrupaciones ni refinamientos** como si fueran resultado: el refinamiento se muestra recién en el árbol construido.
+- Emitís **únicamente** las preguntas de etiquetado. Los escenarios que van a ser hojas se nombran dentro de esas preguntas, en lenguaje del sistema del usuario, para que sepa sobre qué está decidiendo.
+- Decile explícitamente que el árbol queda pendiente y que se construye en cuanto responda; sin esas dos decisiones no hay priorización posible, porque toda la utilidad del árbol es ordenar el esfuerzo de diseño.
+
+Si **no hay ningún escenario validado**, la compuerta también está cerrada y no hay nada que etiquetar: avisá que todavía no hay ningún requerimiento cerrado y que el árbol necesita al menos uno. No dejes filas placeholder ni inventes hojas.
+
+## Preguntas de etiquetado (orientar sin decidir)
+Se emiten con `docs/templates/template_pregunta_prioridad.md`, que es de solo lectura y ya trae la semántica de los tres niveles y sus implicancias de diseño. La plantilla **se rellena**: repetís su bloque separado por `---` una vez por cada escenario sin etiquetar, y reemplazás los placeholders (`[N]`, `[Atributo de Calidad]`, `[Atributo]`, `[artefacto involucrado]` y el resumen de una línea) con los datos reales del escenario validado. Si a un escenario le falta una sola de las dos etiquetas, dejás su bloque igual pero pedís únicamente la que falta.
+
+Reglas de redacción:
+- **No cambies el encabezado, el cierre ni la estructura de las dos preguntas.** No agregues ni quites niveles: son siempre H, M y L.
+- Anclá cada nivel al escenario: el resumen y los placeholders de artefacto y atributo tienen que hablar de su medida de respuesta, su componente y su entorno concretos, no de "el atributo Rendimiento" en abstracto. La semántica es genérica; la referencia, específica.
+- Las implicancias de diseño que menciona la plantilla salen de la bibliografía: alerta activa para el arquitecto, máxima prioridad de análisis y diseño de tácticas para `(H, H)`, postergación en el diseño arquitectónico inicial para lo poco riesgoso, y tradeoffs entre atributos. Si el caso exige una implicancia que la bibliografía no cubre, declarala fuera de alcance en vez de inventarla.
+- Presentá las tres opciones **con el mismo peso**. No recomiendes, no señales una como la más probable, no las ordenes por probabilidad, no ofrezcas un default ni un *Straw Man*. Explicar qué implicaría cada nivel no es proponer uno.
+- Si el usuario responde con una sola letra por escenario, preguntá cuál de las dos etiquetas está dando antes de asumirla.
+- Esta plantilla es la de esta etapa. `docs/templates/template_preguntas.md` es para los datos faltantes de un escenario, no para priorizar.
+
+## Flujo Obligatorio de Operación (RAG Local)
+Antes de redactar, lee en este orden:
+1. `docs/referencia/teoria_sei.md` — §2 (ASR: ambas condiciones; la skill reúne evidencia, no dictamina) y §3 (jerarquía de 4 niveles y semántica H/M/L).
+2. `docs/referencia/Árbol de Utilidad 3c62d4a554c5817cbb44ee62602cb06a.md` — 4 niveles y etiquetas de hoja.
+3. `docs/referencia/atributos/Clasificaciones de Atributos de Calidad 3c62d4a554c5817e999cef3bb762d6ad.md` — taxonomía del nivel 2 (ISO 9126, MITRE o IEEE 1061).
+4. La ficha del atributo en `docs/referencia/atributos/` — refinamiento (sub-atributo) y, cuando correspondan las etiquetas, tácticas y tradeoffs para la evidencia de ASR.
+5. La plantilla que vas a emitir, según la compuerta: `docs/templates/template_pregunta_prioridad.md` si falta alguna etiqueta, `docs/templates/template_arbol.md` si están todas. Se rellenan; no se editan.
+
+## Dónde vive cada pieza (no mutar las 5 columnas)
+Todo lo de esta sección aplica **solo con la compuerta abierta**, es decir cuando ya no falta ninguna etiqueta. `docs/templates/template_arbol.md` es de solo lectura y tiene exactamente estas columnas: Atributo de Calidad | Refinamiento | Escenario (ASR) | Prioridad (Negocio) | Dificultad (Técnica). El archivo de salida las respeta tal cual. El contenido extra **envuelve** la tabla, no agrega columnas ni filas de encabezado:
+
+1. **Título** — el H1 del template. Es la raíz *Utility*; no es una columna.
+2. **Taxonomía** — un párrafo **encima** de la tabla: `**Taxonomía del nivel 2:** [ISO 9126 | MITRE | IEEE 1061].` más una frase de por qué esa norma cubre los atributos presentes. Default: ISO 9126. MITRE u IEEE 1061 solo si los atributos del sistema no entran en las seis características ISO.
+3. **Tabla** — copia exacta de las 5 columnas del template, una fila por escenario validado. Nivel 2 = *Atributo de Calidad*; nivel 3 = *Refinamiento*; nivel 4 = *Escenario* (link relativo a `../2-escenarios/` más resumen de la medida). `(P, D)` = las dos columnas H/M/L. El encabezado dice *Escenario (ASR)* porque así está la plantilla: **no toda fila es ASR**.
+4. **Cobertura y alertas** — **debajo** de la tabla, después de construirla:
+   - Atributo o refinamiento relevante al sistema sin escenario asociado → *"revisar cobertura: posible escenario no capturado"* (no es error).
+   - Toda hoja `(H, H)` → máxima prioridad de análisis arquitectónico.
+   - Alerta de viabilidad/alcance si hay **3 o más** hojas `(H, H)`, o si hay **al menos 2** y son **más de la mitad** de las hojas.
+5. **Evidencia de ASR** — bloque **debajo** de cobertura/alertas. Existe porque la compuerta ya está abierta: nunca se emite vacío ni como "no determinable", y no hay marca de indeterminación. Por cada hoja con Prioridad **H o M** presentá: (a) componentes/artefactos afectados; (b) tácticas que exige la ficha del atributo; (c) tradeoffs con otros atributos. Nunca emitas el veredicto: el arquitecto decide la condición de impacto profundo. Las hojas con Prioridad **L** entran a la tabla y no van en este bloque.
+
+## FORMATO DE RESPUESTA
+**Destinatario: el usuario final dueño del sistema.** Hablá de su sistema y de lo que falta decidir. No menciones rutas ni nombres de archivos de la bibliografía, ni la lógica interna, los pasos o las etapas de las skills.
+
+La compuerta define cuál de las dos salidas emitís. Nunca las dos juntas, nunca ninguna:
+
+- **Falta al menos una etiqueta** → **solo** `docs/templates/template_pregunta_prioridad.md`, con un bloque por escenario sin etiquetar.
+- **No hay ningún escenario validado** → no hay nada que priorizar: avisalo en prosa, sin rellenar ninguna plantilla.
+- **Están todas las etiquetas** → **solo** el árbol: `docs/templates/template_arbol.md` envuelto con taxonomía / cobertura / alertas / evidencia ASR según las reglas de ubicación de arriba.
+
+Rellená las plantillas sin alterar su estructura.
+
+## Construcción
+- Un escenario validado = una hoja = una fila. Agrupá por atributo y después por refinamiento (el sub-atributo concreto del sistema: latencia en pico, resistencia a autenticación fallida, caída de proceso, cambio rutinario de pasarela). El refinamiento sale de las 6 partes y de la ficha; si el usuario lo corrige, reescribí el mismo archivo.
+- Repetí el nombre del atributo en cada fila de ese grupo. No inventes filas ni atributos que no tengan escenario validado.
+- Toda fila que escribís lleva sus dos etiquetas reales. No existe la fila a medio etiquetar ni la fila ficticia: si no podés completar las cinco columnas de todas las hojas, la compuerta está cerrada y no escribís tabla.
+
+## Consolidación del artefacto (archivo único)
+Un único `.md` en `docs/arquitectura/3-arbol-utilidad/`, y **solo con la compuerta abierta**. Preferí el archivo abierto; si no hay otro, `arbol_base.md`. Reescribilo en cada iteración: sin versiones, copias ni sufijos. Mientras falte una etiqueta ese archivo no se toca: queda con su contenido previo, aunque sea el placeholder de la plantilla. No edites los `.md` de `2-escenarios/` (el sello de auditoría no se toca; las etiquetas H/M/L no se copian hacia atrás).
+
+## Prohibiciones
+- **No asignes H/M/L** ni completes esas celdas por analogía con otros sistemas. Explicar qué implicaría cada nivel es obligatorio; elegir uno, sugerirlo, insinuarlo como el más probable o dejarlo como default está prohibido.
+- **No construyas el árbol con etiquetas faltantes.** Ni tabla parcial, ni celdas `[H/M/L]`, ni taxonomía o alertas por adelantado, ni escritura del archivo del árbol.
+- **No dictamines ASR.** No escribas "este escenario es ASR" ni "no es ASR".
+- **No uses conocimiento externo.** Taxonomía, refinamientos, tácticas y tradeoffs salen de `docs/referencia/`. Si la bibliografía no cubre un aspecto, decláralo fuera de alcance.
+- **No alteres las plantillas.** No agregues, quites ni renombres columnas de la tabla, ni cambies los tres niveles ni el encabezado de la plantilla de priorización.
