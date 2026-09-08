@@ -14,15 +14,18 @@
 
 | Etiqueta | Criterio |
 |---|---|
-| **H (High)** | Requiere cambios arquitectónicos transversales (afecta múltiples componentes o capas), o depende de tecnología/infraestructura no probada todavía en el proyecto, o su medida de respuesta es difícil de estimar sin un spike/prototipo (ver straw man en `../../../shared/glosario-atributos-calidad.md`). |
-| **M (Medium)** | Se resuelve con tácticas conocidas y acotadas a uno o pocos componentes, con esfuerzo estimable con confianza razonable a partir de experiencia previa o benchmarks. |
+| **H (High)** | El cambio es transversal (afecta múltiples componentes o capas) **Y**, además, requiere un enfoque nuevo o no probado todavía en el proyecto, o exige retesting/impacto en capas que el equipo no controla directamente (ej. actualizar un componente comercial de terceros) — o su medida de respuesta es difícil de estimar sin un spike/prototipo (ver straw man en `../../../shared/glosario-atributos-calidad.md`). |
+| **M (Medium)** | Se resuelve con tácticas ya conocidas y probadas (ej. escalado horizontal estándar, caching, balanceo de carga), aunque toque varios componentes, con esfuerzo estimable con confianza razonable a partir de experiencia previa o benchmarks. |
 | **L (Low)** | Se resuelve con una táctica simple y localizada (un solo componente, patrón ya usado en el sistema), de esfuerzo bajo y predecible. |
+
+> **Aclaración:** tocar múltiples componentes, por sí solo, **no** alcanza para H si las tácticas usadas en cada componente ya son conocidas. La cantidad de componentes afectados no es el criterio — lo es si el equipo ya sabe cómo resolverlo o si tiene que aprender/probar algo nuevo para lograrlo.
 
 ## Regla de combinación
 
 1. Evaluar los dos ejes **de forma independiente** — no dejar que la dificultad técnica influya en la importancia de negocio ni viceversa.
-2. Si hay ambigüedad entre dos niveles adyacentes (ej. ¿H o M?), preferir el nivel **más alto** cuando el escenario involucra dinero, datos sensibles o cumplimiento legal; preferir el nivel **más bajo** cuando la incertidumbre viene de falta de información (y dejarlo anotado para reconfirmar con el stakeholder, en línea con el straw man de `../../../shared/glosario-atributos-calidad.md`).
+2. Si hay ambigüedad entre dos niveles adyacentes (ej. ¿H o M?), preferir el nivel **más alto** cuando el escenario involucra dinero, cumplimiento legal, o **datos sensibles** — pero el desempate por datos sensibles solo aplica cuando el escenario en sí trata específicamente sobre proteger, controlar acceso a, o exponer ese dato sensible (confidencialidad, autorización, etc.), **no** cuando el escenario es sobre otra preocupación (capacidad, disponibilidad, mantenibilidad) que simplemente ocurre dentro de un sistema que en general maneja datos sensibles. Que el sistema completo sea, por ejemplo, de salud o finanzas no vuelve H automáticamente a un escenario de throughput o de upgrade de base de datos, salvo que ese escenario puntual sea sobre proteger datos sensibles en sí mismo. Preferir el nivel **más bajo** cuando la incertidumbre viene de falta de información (y dejarlo anotado para reconfirmar con el stakeholder, en línea con el straw man de `../../../shared/glosario-atributos-calidad.md`).
 3. Un escenario **(H, H)** es candidato prioritario de atención arquitectural inmediata; un **(L, L)** puede posponerse sin riesgo en el diseño arquitectural inicial.
+4. **Default conservador:** ante cualquier duda real entre dos niveles y sin un criterio específico de los puntos 2 (arriba) o de la aclaración del Eje 2 que lo justifique, preferir el nivel **más bajo**, no el más alto. El sesgo por defecto de este criterio debe ser conservador, no inflacionario — subir de nivel requiere una razón concreta y verificable, no una intuición de que "podría ser importante".
 
 ## Antes de asignar la etiqueta
 
