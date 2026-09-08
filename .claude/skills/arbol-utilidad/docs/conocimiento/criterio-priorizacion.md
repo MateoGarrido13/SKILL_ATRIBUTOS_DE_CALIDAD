@@ -12,6 +12,8 @@
 
 ## Eje 2: Dificultad / riesgo técnico
 
+> **Principio rector — la evidencia cuantitativa manda sobre la categoría.** Los ejemplos de la tabla de abajo son ilustrativos, no reglas fijas ni determinísticas. Antes de aplicar un ejemplo categórico (ej. "componente de terceros", "múltiples capas"), verificar si el escenario mismo ya provee una medida de esfuerzo, tiempo o costo concreto (ej. "X días-persona", "X semanas-persona"). Si esa medida existe, es la evidencia **primaria** para decidir el eje técnico — por encima de cualquier categoría genérica. Comparar esa medida contra las medidas de esfuerzo de otros escenarios del **mismo conjunto** que se está priorizando: si un escenario categorizado como M lleva más tiempo-persona que uno que se está por categorizar como H, hay una inconsistencia que hay que resolver a favor de la medida real, no de la categoría.
+
 | Etiqueta | Criterio |
 |---|---|
 | **H (High)** | El cambio es transversal (afecta múltiples componentes o capas) **Y**, además, requiere un enfoque nuevo o no probado todavía en el proyecto, o exige retesting/impacto en capas que el equipo no controla directamente (ej. actualizar un componente comercial de terceros) — o su medida de respuesta es difícil de estimar sin un spike/prototipo (ver straw man en `../../../shared/glosario-atributos-calidad.md`). |
