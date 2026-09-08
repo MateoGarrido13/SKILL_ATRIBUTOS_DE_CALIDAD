@@ -1,6 +1,8 @@
-# Caso 03 (SAP — Performance) — input para skill-generar-escenarios-calidad
+<!-- Este input NO menciona el atributo a propósito — es un caso de clasificación limpio (sin ambigüedad real), a diferencia de caso-01-monopatines que se usa para observar comportamiento ante inputs ambiguos, no para medir precisión estricta. -->
 
-> Fuente: Software Architecture in Practice (Bass/Clements/Kazman), Figura 9.1, "example concrete performance scenario" (cap. 9, sección Performance General Scenario). Ejemplo del libro, ya resuelto por los autores — se usa acá en su forma narrativa cruda (sin separar en 6 partes) para que la skill lo procese desde cero.
+# Caso 03 (SAP) — input para skill-generar-escenarios-calidad
+
+> Fuente: Software Architecture in Practice (Bass/Clements/Kazman), Figura 9.1 (cap. 9). Ejemplo del libro, ya resuelto por los autores — se usa acá en su forma narrativa cruda (sin separar en 6 partes ni nombrar el atributo) para que la skill lo procese desde cero y clasifique por su cuenta qué atributo de calidad está implicado.
 
 ## Situación a procesar
 
@@ -8,4 +10,4 @@
 
 ## Consigna para la skill
 
-A partir de esta descripción narrativa, generar el escenario de atributo de calidad correspondiente con las 6 partes del template SEI.
+Ayudame a definir un escenario de atributo de calidad para este caso.
