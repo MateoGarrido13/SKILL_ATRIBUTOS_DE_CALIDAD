@@ -1,1 +1,0 @@
-“La aplicación debe soportar nuestra expansión hacia todo latinoamerica sin bajar su tiempo de respuesta. Debe continuar siendo rapido cuando el cliente busque los artículos en la seccion de tienda online”
