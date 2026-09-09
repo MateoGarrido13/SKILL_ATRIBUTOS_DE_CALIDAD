@@ -27,186 +27,179 @@ Escenario 5:
 
 # OUTPUT: MarketHub — Escenarios de Atributos de Calidad
 
-**Plataforma Global de E-commerce — Generación, Validación y Árbol de Utilidad (Método SEI / ATAM)**
+## Contexto del sistema
 
-Este documento aplica el proceso de tres etapas del método SEI/ATAM sobre los cinco requerimientos informales relevados para MarketHub: (1) mapeo del enunciado original a la plantilla de 6 partes, (2) auditoría de completitud y propuesta de valores para completar cada parte faltante o vaga, y (3) construcción del árbol de utilidad para priorizar los escenarios frente al análisis de arquitectura.
+MarketHub es una plataforma global de e-commerce multicanal (PWA, app móvil nativa y panel de administración) que se integra con pasarelas de pago regionales (Mercado Pago, Stripe, PayPal) y sistemas logísticos de terceros (Andreani, DHL), opera en múltiples países y maneja datos financieros y personales sensibles.
+
+A continuación se presentan los 5 escenarios originales, su auditoría de completitud según la plantilla de 6 partes del SEI, y la versión completada de cada uno. Al final se incluye el árbol de utilidad para priorizarlos.
 
 ---
 
-## Escenario 1 — Integrabilidad: APIs de pasarelas de pago y logística
+## Escenario 1 — Modificabilidad / Interoperabilidad
+**Original:** *"El sistema tiene que poder conectarse con las APIs de las diferentes empresas de logística y pasarelas de pago de forma que si una cambia algo, no se rompa todo el núcleo de la tienda."*
 
-**Enunciado original:**
-> "El sistema tiene que poder conectarse con las APIs de las diferentes empresas de logística y pasarelas de pago de forma que si una cambia algo, no se rompa todo el núcleo de la tienda."
-
-### Auditoría de completitud
+### Auditoría
 
 | Parte | Estado | Comentario |
 |---|---|---|
-| Fuente del estímulo | ⚠️ Vaga | "Las empresas de logística y pasarelas de pago" — hay que nombrar que es un proveedor externo puntual (ej. Stripe, Andreani) el que actúa, no todas a la vez. |
-| Estímulo | ⚠️ Vaga | "Cambia algo" no dice qué: ¿versión de API, formato de respuesta, endpoint, SDK? |
-| Artefacto | ❌ Falta | Se dice qué NO debe romperse ("el núcleo de la tienda") pero no qué componente recibe el cambio. |
-| Entorno | ❌ Falta | No se especifica si ocurre en producción, en despliegue, etc. |
-| Respuesta | ⚠️ Vaga | "No se rompa todo" es cualitativo; falta describir cómo se aísla el impacto. |
-| Medida de la respuesta | ❌ Falta | No hay ningún número o criterio verificable. |
+| Fuente del estímulo | ⚠️ Vaga | No especifica quién genera el cambio (¿el proveedor externo?) |
+| Estímulo | ⚠️ Vaga | "si una cambia algo" no define el tipo de cambio |
+| Artefacto | ⚠️ Vaga | "el núcleo de la tienda" es demasiado amplio |
+| Entorno | ❌ Falta | No se menciona si es en producción, desarrollo o despliegue |
+| Respuesta | ⚠️ Vaga | "no se rompa todo" no especifica el mecanismo de aislamiento |
+| Medida de la respuesta | ❌ Falta | No hay número ni criterio verificable |
 
 ### Escenario completado
 
 | Parte | Contenido |
 |---|---|
-| Fuente del estímulo | Un proveedor externo de pagos o logística (ej. Stripe, Mercado Pago, Andreani, DHL) |
-| Estímulo | Modifica su contrato de integración (nueva versión de API, cambio de formato de respuesta o de SDK) |
-| Artefacto | La capa de adaptadores de integración (adapter de pagos / adapter logístico), aislada del núcleo de checkout e inventario |
+| Fuente del estímulo | Un proveedor externo de pasarela de pago o logística (ej. Stripe, Andreani) |
+| Estímulo | Publica una nueva versión de su API/SDK o modifica el contrato de su servicio |
+| Artefacto | La capa de adaptadores de integración (payment gateway adapter / shipping provider adapter), separada del núcleo de checkout y catálogo |
 | Entorno | Operación normal en producción |
-| Respuesta | El sistema absorbe el cambio dentro del adaptador correspondiente; el núcleo de checkout e inventario no requiere modificaciones y sigue operando sin interrupciones |
-| Medida de la respuesta | El cambio se implementa en ≤ 3 días-persona (supuesto: ajustar según SLA real), tocando únicamente el adaptador afectado, con 0% de downtime del checkout durante la actualización |
+| Respuesta | El sistema aísla el cambio dentro del adaptador correspondiente, sin afectar el núcleo del e-commerce ni las demás integraciones |
+| Medida de la respuesta | El cambio se implementa modificando ≤ 1 adaptador, en ≤ 3 días-persona, sin regresiones ni tiempo de inactividad del checkout *(supuesto: ajustar según SLA real del equipo)* |
 
 ---
 
-## Escenario 2 — Portabilidad: renderizado multi-dispositivo y multi-navegador
+## Escenario 2 — Usabilidad / Portabilidad
+**Original:** *"La aplicación web de la tienda online tiene que poder correr sin problemas raros de visualización tanto en computadoras como en los celulares de los clientes, sin importar el navegador que usen."*
 
-*Nota: la portabilidad no está en el catálogo estándar de atributos de la skill (que cubre interoperabilidad, no portabilidad); se construyó con la misma plantilla de 6 partes.*
-
-**Enunciado original:**
-> "La aplicación web de la tienda online tiene que poder correr sin problemas raros de visualización tanto en computadoras como en los celulares de los clientes, sin importar el navegador que usen."
-
-### Auditoría de completitud
+### Auditoría
 
 | Parte | Estado | Comentario |
 |---|---|---|
-| Fuente del estímulo | ⚠️ Vaga | "Los clientes" — falta especificar que el disparador es el tipo de dispositivo/navegador que usan. |
-| Estímulo | ⚠️ Vaga | "Sin importar el navegador" no dice cuáles navegadores/SO en concreto. |
-| Artefacto | ⚠️ Vaga | El sistema tiene PWA + app nativa + panel admin; "la aplicación web" hay que acotarlo al front-end de la PWA. |
-| Entorno | ⚠️ Vaga | Se menciona "normativas de visualización locales" en el contexto general pero no en el escenario mismo. |
-| Respuesta | ⚠️ Vaga | "Sin problemas raros de visualización" no es verificable. |
-| Medida de la respuesta | ❌ Falta | No hay número ni criterio de aceptación. |
+| Fuente del estímulo | ⚠️ Vaga | "los clientes" sin distinguir dispositivo/navegador |
+| Estímulo | ⚠️ Vaga | "problemas raros de visualización" no es un estímulo concreto |
+| Artefacto | ✅ | La aplicación web (PWA) de la tienda |
+| Entorno | ⚠️ Vaga | Menciona navegadores pero no dispositivos/resoluciones |
+| Respuesta | ⚠️ Vaga | "correr sin problemas" no define qué es correcto |
+| Medida de la respuesta | ❌ Falta | No hay número ni criterio verificable |
 
 ### Escenario completado
 
 | Parte | Contenido |
 |---|---|
-| Fuente del estímulo | Un comprador final que accede desde un dispositivo/navegador específico |
-| Estímulo | Abre la PWA de la tienda desde Chrome, Safari, Firefox o Edge (desktop) o desde la app nativa en iOS/Android, en un país con normativas de visualización propias (moneda, idioma, formato de fecha) |
-| Artefacto | El front-end de la PWA y la app móvil nativa (capa de presentación) |
-| Entorno | Uso normal, en cualquiera de los mercados donde opera MarketHub |
-| Respuesta | La interfaz se renderiza con el mismo layout, funcionalidad y datos localizados correctamente, sin errores visuales ni de funcionalidad |
-| Medida de la respuesta | 0 defectos visuales críticos en la matriz de prueba (4 navegadores × iOS × Android) (supuesto: definir la matriz exacta con QA), tiempo de carga inicial < 3s en 4G (supuesto: ajustar según benchmark de negocio) |
+| Fuente del estímulo | Un cliente final que accede desde un dispositivo móvil o de escritorio |
+| Estímulo | Carga la PWA de la tienda en Chrome, Safari, Firefox o Edge, en distintas resoluciones de pantalla |
+| Artefacto | La interfaz de la PWA (componentes de catálogo, carrito y checkout) |
+| Entorno | Operación normal, en cualquiera de los navegadores y dispositivos soportados (iOS, Android, escritorio) |
+| Respuesta | La interfaz se renderiza de forma consistente y funcional, sin errores visuales ni pérdida de funcionalidad |
+| Medida de la respuesta | 0 defectos visuales críticos en el 100% de la matriz de navegadores/dispositivos soportados; tiempo de renderizado inicial < 2s en el percentil 95 *(supuesto: ajustar según matriz de soporte definida por negocio)* |
 
 ---
 
-## Escenario 3 — Seguridad: datos de tarjetas y contraseñas
+## Escenario 3 — Seguridad (datos de pago y credenciales)
+**Original:** *"Los datos de las tarjetas de crédito de los compradores y las contraseñas tienen que estar recontra seguros para que ningún hacker pueda robarlos de la base de datos."*
 
-**Enunciado original:**
-> "Los datos de las tarjetas de crédito de los compradores y las contraseñas tienen que estar recontra seguros para que ningún hacker pueda robárselos de la base de datos."
-
-### Auditoría de completitud
+### Auditoría
 
 | Parte | Estado | Comentario |
 |---|---|---|
-| Fuente del estímulo | ⚠️ Vaga | "Ningún hacker" está presente pero sin especificar tipo de amenaza (externo, interno, automatizado). |
-| Estímulo | ⚠️ Vaga | "Robárselos" no dice el vector: acceso directo a BD, inyección SQL, dump de backup, etc. |
-| Artefacto | ⚠️ Vaga | "La base de datos" es correcto pero se puede acotar a qué datos (tarjetas, credenciales). |
-| Entorno | ❌ Falta | No se dice si es en operación normal o durante un ataque activo. |
-| Respuesta | ⚠️ Vaga | "Recontra seguros" no es una respuesta accionable del sistema. |
-| Medida de la respuesta | ❌ Falta | Sin ningún estándar o número verificable. |
+| Fuente del estímulo | ⚠️ Vaga | "ningún hacker" no especifica el vector de ataque |
+| Estímulo | ⚠️ Vaga | "robarlos" no distingue acceso a BD vs. intercepción en tránsito |
+| Artefacto | ⚠️ Vaga | "la base de datos" sin diferenciar tipos de datos |
+| Entorno | ❌ Falta | No dice si es en tránsito, en reposo, o ambos |
+| Respuesta | ⚠️ Vaga | "recontra seguros" no es accionable |
+| Medida de la respuesta | ❌ Falta | No hay estándar ni número verificable |
 
 ### Escenario completado
 
 | Parte | Contenido |
 |---|---|
-| Fuente del estímulo | Un atacante externo (o interno malicioso) que obtiene acceso no autorizado a la infraestructura de datos |
-| Estímulo | Intenta leer o exfiltrar datos de tarjetas de crédito o credenciales almacenadas (ej. mediante acceso directo a la BD, inyección, o robo de backup) |
-| Artefacto | El almacenamiento de datos de pago y credenciales de usuarios |
-| Entorno | Operación normal o durante un intento de intrusión activo |
-| Respuesta | Los datos permanecen ilegibles para el atacante: cifrado en reposo, TLS en tránsito, contraseñas hasheadas (no reversibles) |
-| Medida de la respuesta | Cifrado AES-256 en reposo, TLS 1.2+ en tránsito, hashing con Argon2/bcrypt (supuesto: alinear con requisito PCI-DSS real de la empresa), 0 incidentes de datos expuestos en texto plano |
+| Fuente del estímulo | Un atacante externo que obtiene acceso no autorizado a la infraestructura o intercepta tráfico de red |
+| Estímulo | Intenta leer o exfiltrar datos de tarjetas de crédito, contraseñas o domicilios almacenados |
+| Artefacto | La base de datos de usuarios/transacciones y el canal de comunicación cliente-backend |
+| Entorno | Tanto en tránsito (comunicación cliente-servidor) como en reposo (almacenamiento persistente) |
+| Respuesta | Los datos sensibles permanecen ilegibles para el atacante; el sistema cumple con estándares de cifrado y tokenización de datos de pago |
+| Medida de la respuesta | Cifrado TLS 1.2+ en tránsito, AES-256 en reposo, cumplimiento PCI-DSS, contraseñas con hashing (bcrypt/argon2); 0 incidentes de exposición en texto plano *(supuesto: nivel de cumplimiento a validar con seguridad/legal)* |
 
 ---
 
-## Escenario 4 — Seguridad: panel de administración y fuerza bruta
+## Escenario 4 — Seguridad (intrusión y fuerza bruta)
+**Original:** *"Si un usuario malintencionado intenta vulnerar el panel de administración o hacer fuerza bruta para entrar a cuentas ajenas, el sistema tiene que bloquearlo rápido y registrar la auditoría."*
 
-**Enunciado original:**
-> "Si un usuario malintencionado intenta vulnerar el panel de administración o hacer fuerza bruta para entrar a cuentas ajenas, el sistema tiene que bloquearlo rápido y registrar la auditoría."
-
-### Auditoría de completitud
+### Auditoría
 
 | Parte | Estado | Comentario |
 |---|---|---|
-| Fuente del estímulo | ✅ | "Usuario malintencionado" está presente; se puede precisar como bot/script de fuerza bruta. |
-| Estímulo | ⚠️ Vaga | "Vulnerar" o "hacer fuerza bruta" no especifica el umbral (¿cuántos intentos?). |
-| Artefacto | ✅ | "Panel de administración" / "cuentas ajenas" — razonablemente acotado al módulo de autenticación. |
-| Entorno | ❌ Falta | No se indica el entorno (operación normal, fuera de horario, etc.). |
-| Respuesta | ⚠️ Vaga | "Bloquearlo rápido" y "registrar la auditoría" están bien orientados pero sin mecanismo concreto. |
-| Medida de la respuesta | ❌ Falta | "Rápido" no es medible. |
+| Fuente del estímulo | ✅ | "un usuario malintencionado" |
+| Estímulo | ⚠️ Vaga | No especifica el umbral/frecuencia que dispara la detección |
+| Artefacto | ✅ | El panel de administración / cuentas de usuario |
+| Entorno | ❌ Falta | No especifica si es en operación normal o ataque sostenido |
+| Respuesta | ⚠️ Vaga | "bloquearlo rápido" no define el mecanismo |
+| Medida de la respuesta | ❌ Falta | No hay número (tiempo de bloqueo, intentos permitidos) |
 
 ### Escenario completado
 
 | Parte | Contenido |
 |---|---|
-| Fuente del estímulo | Un actor malicioso (usuario o bot automatizado) |
-| Estímulo | Realiza múltiples intentos fallidos de inicio de sesión contra el panel de administración o cuentas de otros usuarios (fuerza bruta) |
+| Fuente del estímulo | Un usuario malintencionado (externo o cuenta comprometida) |
+| Estímulo | Realiza múltiples intentos fallidos de login (fuerza bruta) o intenta explotar una vulnerabilidad contra el panel de administración |
 | Artefacto | El módulo de autenticación del panel de administración |
-| Entorno | Operación normal, en cualquier horario |
-| Respuesta | El sistema bloquea la cuenta/IP de origen, registra el intento en el log de auditoría y notifica al equipo de seguridad |
-| Medida de la respuesta | Bloqueo automático tras 5 intentos fallidos en 60 segundos (supuesto: ajustar según política de seguridad real), 100% de los intentos quedan auditados, notificación al equipo de seguridad en ≤ 5 minutos |
+| Entorno | Durante un ataque activo, en cualquier momento de operación |
+| Respuesta | El sistema bloquea la cuenta/IP de origen, exige verificación adicional (MFA) y registra el evento en el log de auditoría, notificando al equipo de seguridad |
+| Medida de la respuesta | Bloqueo automático tras 5 intentos fallidos en ≤ 60s; evento auditado y alerta enviada en ≤ 30s; 0 accesos no autorizados exitosos *(supuesto: umbrales a validar con seguridad)* |
 
 ---
 
-## Escenario 5 — Integrabilidad: sincronización de catálogo de vendedores
+## Escenario 5 — Interoperabilidad (sincronización de catálogo)
+**Original:** *"Cuando un vendedor externo quiera sincronizar su propio catálogo de productos con el inventario de MarketHub, la plataforma debe permitir integrar ese sistema externo mediante adaptadores estándar."*
 
-**Enunciado original:**
-> "Cuando un vendedor externo quiera sincronizar su propio catálogo de productos con el inventario de MarketHub, la plataforma debe permitir integrar ese sistema externo mediante adaptadores estándar."
-
-### Auditoría de completitud
+### Auditoría
 
 | Parte | Estado | Comentario |
 |---|---|---|
-| Fuente del estímulo | ✅ | "Vendedor externo" está claramente identificado. |
-| Estímulo | ⚠️ Vaga | "Quiera sincronizar su catálogo" no dice si es carga inicial, actualización periódica o evento puntual. |
-| Artefacto | ⚠️ Vaga | "Adaptadores estándar" se menciona como mecanismo pero no como artefacto acotado (¿API REST? ¿motor de mapeo?). |
-| Entorno | ❌ Falta | No se especifica el entorno. |
-| Respuesta | ⚠️ Vaga | "Permitir integrar" es cualitativo; falta el resultado esperado del sistema. |
-| Medida de la respuesta | ❌ Falta | Sin criterio verificable. |
+| Fuente del estímulo | ✅ | "un vendedor externo" |
+| Estímulo | ⚠️ Vaga | No especifica formato/protocolo ni frecuencia (tiempo real vs. batch) |
+| Artefacto | ⚠️ Vaga | Menciona "adaptadores estándar" pero no el componente específico |
+| Entorno | ❌ Falta | No indica operación normal vs. incompatibilidad |
+| Respuesta | ⚠️ Vaga | No dice qué pasa si el formato es incompatible |
+| Medida de la respuesta | ❌ Falta | No hay criterio verificable |
 
 ### Escenario completado
 
 | Parte | Contenido |
 |---|---|
-| Fuente del estímulo | Un vendedor externo (partner) que gestiona su propio sistema de inventario |
-| Estímulo | Solicita sincronizar (alta, baja o actualización de) su catálogo de productos con el inventario de MarketHub |
-| Artefacto | El módulo de integración de catálogo (adaptador estándar, ej. API REST/JSON) |
-| Entorno | Operación normal |
-| Respuesta | El sistema integra los datos del catálogo externo sin requerir cambios en el núcleo de inventario, y reporta errores de formato si el adaptador detecta incompatibilidad |
-| Medida de la respuesta | Onboarding de un nuevo vendedor en ≤ 2 días-persona (supuesto: ajustar según capacidad del equipo), ≥ 99% de sincronizaciones exitosas, latencia de sincronización < 10 min |
+| Fuente del estímulo | Un vendedor externo (partner) con su propio sistema de gestión de inventario |
+| Estímulo | Envía una actualización de catálogo/stock mediante un formato estándar acordado (API REST, feed CSV/XML) |
+| Artefacto | El adaptador de integración de catálogo/inventario de MarketHub |
+| Entorno | Operación normal, incluyendo casos de formato/campo incompatible |
+| Respuesta | El sistema procesa la actualización si el formato es válido, o la rechaza reportando el error al vendedor sin afectar el inventario de otros partners |
+| Medida de la respuesta | ≥ 99% de sincronizaciones válidas procesadas en ≤ 5 min; incompatibilidades reportadas en ≤ 1 min; 0 afectación cruzada entre catálogos *(supuesto: SLA a validar con negocio)* |
 
 ---
 
-## Árbol de utilidad
+## Árbol de Utilidad
 
-*Importancia y Dificultad son propuestas a validar con los stakeholders de MarketHub.*
+*(Importancia y Dificultad propuestas como punto de partida — a validar con los stakeholders de negocio y seguridad)*
 
-- **Utilidad (raíz)**
-  - **Interoperabilidad / Integrabilidad**
-    - Integración con pasarelas de pago y logística
-      - Escenario 1: adaptador absorbe cambio de proveedor externo sin tocar el núcleo — (Alta, Alta)
-    - Sincronización de catálogos de vendedores
-      - Escenario 5: onboarding de vendedor vía adaptador estándar — (Media, Media)
-  - **Portabilidad**
-    - Renderizado consistente multi-dispositivo/navegador
-      - Escenario 2: 0 defectos visuales críticos en matriz navegador/SO — (Media, Media)
-  - **Seguridad**
-    - Protección de datos sensibles en reposo/tránsito
-      - Escenario 3: cifrado y hashing de tarjetas/credenciales — (Alta, Alta)
-    - Defensa del panel de administración
-      - Escenario 4: bloqueo y auditoría ante fuerza bruta — (Alta, Media)
+```
+Utilidad (raíz)
+├── Seguridad
+│   ├── Protección de datos de pago y credenciales
+│   │   └── Escenario 3: cifrado en tránsito/reposo, PCI-DSS, hashing de contraseñas (Alta, Alta)
+│   └── Defensa contra intrusión y fuerza bruta en panel admin
+│       └── Escenario 4: bloqueo automático + auditoría ante intentos maliciosos (Alta, Media)
+├── Modificabilidad
+│   └── Aislamiento de cambios en integraciones externas
+│       └── Escenario 1: cambios en APIs de pago/logística no afectan el núcleo (Alta, Media)
+├── Usabilidad / Portabilidad
+│   └── Consistencia visual multi-dispositivo y multi-navegador
+│       └── Escenario 2: renderizado correcto en iOS, Android y navegadores de escritorio (Alta, Media)
+└── Interoperabilidad
+    └── Sincronización de catálogo con sistemas de vendedores externos
+        └── Escenario 5: adaptadores estándar para actualización de inventario (Media, Media)
+```
 
-### Tabla de priorización
+### Tabla resumen de priorización
 
 | Escenario | Atributo | Importancia | Dificultad | Prioridad |
 |---|---|---|---|---|
-| 3 | Seguridad (datos de pago) | Alta | Alta | **1** |
-| 1 | Integrabilidad (pagos/logística) | Alta | Alta | **2** |
-| 4 | Seguridad (panel admin) | Alta | Media | **3** |
-| 5 | Integrabilidad (catálogo vendedores) | Media | Media | **4** |
-| 2 | Portabilidad | Media | Media | **5** |
+| 3 — Protección de datos de pago y credenciales | Seguridad | Alta | Alta | 1 |
+| 4 — Defensa contra intrusión / fuerza bruta | Seguridad | Alta | Media | 2 |
+| 1 — Aislamiento de cambios en integraciones | Modificabilidad | Alta | Media | 2 |
+| 2 — Consistencia multi-dispositivo/navegador | Usabilidad | Alta | Media | 2 |
+| 5 — Sincronización de catálogo de vendedores | Interoperabilidad | Media | Media | 3 |
 
-Los escenarios (Alta, Alta) — protección de datos de pago (Escenario 3) y la integración desacoplada con proveedores externos (Escenario 1) — son los candidatos prioritarios para el análisis de arquitectura, por ser los de mayor impacto de negocio y mayor esfuerzo de diseño.
+**Nota:** El Escenario 3 se marca como (Alta, Alta) porque combina alto impacto de negocio/legal (exposición de datos de tarjetas) con alta dificultad técnica (cumplimiento PCI-DSS, gestión de cifrado en múltiples capas), por lo que es el candidato prioritario para el análisis de arquitectura. Los valores de Importancia/Dificultad son una propuesta inicial razonada y deben validarse con los stakeholders del negocio y del equipo de seguridad.
