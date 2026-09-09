@@ -8,16 +8,16 @@ El modelo de negocio exige que la plataforma se conecte de manera fluida con mú
 Asimismo, la empresa opera en distintos países, por lo que el front-end de la tienda y la aplicación móvil deben garantizar una experiencia de usuario idéntica y un correcto renderizado tanto en dispositivos móviles iOS y Android como en navegadores de escritorio (Chrome, Safari, Firefox y Edge), adaptándose dinámicamente a las normativas de visualización locales.
 Por otro lado, al manejar volúmenes masivos de transacciones financieras y datos personales sensibles (tarjetas de crédito, domicilios, historiales de compra), el sistema se enfrenta a constantes intentos de ataques informáticos. Se requiere proteger estrictamente la base de datos de usuarios frente a brechas de seguridad, garantizar que las credenciales e información de pago estén cifradas tanto en tránsito como en reposo, y asegurar que cualquier intento de acceso no autorizado a los paneles de gestión sea bloqueado y auditado de inmediato, evitando la manipulación de precios o la exfiltración de datos de clientes.
 Escenarios Vagos (Inputs para la Skill 1 / borradores)
-A partir del relato anterior, se desprenden 5 requerimientos informales o "vagos" que mezclan atributos de calidad y sobre los cuales tu pipeline de skills (Generación $\rightarrow$ Validación $\rightarrow$ Árbol de Utilidad) deberá trabajar:
-Escenario Vago 1 (Integrabilidad):
+A partir del relato anterior, se desprenden 5 requerimientos que mezclan atributos de calidad sobre los cuales se deberá trabajar:
+Escenario 1:
 "El sistema tiene que poder conectarse con las APIs de las diferentes empresas de logística y pasarelas de pago de forma que si una cambia algo, no se rompa todo el núcleo de la tienda."
-Escenario Vago 2 (Portabilidad):
+Escenario 2:
 "La aplicación web de la tienda online tiene que poder correr sin problemas raros de visualización tanto en computadoras como en los celulares de los clientes, sin importar el navegador que usen."
-Escenario Vago 3 (Seguridad):
+Escenario 3:
 "Los datos de las tarjetas de crédito de los compradores y las contraseñas tienen que estar recontra seguros para que ningún hacker pueda robarlos de la base de datos."
-Escenario Vago 4 (Seguridad):
+Escenario 4:
 "Si un usuario malintencionado intenta vulnerar el panel de administración o hacer fuerza bruta para entrar a cuentas ajenas, el sistema tiene que bloquearlo rápido y registrar la auditoría."
-Escenario Vago 5 (Integrabilidad):
+Escenario 5:
 "Cuando un vendedor externo quiera sincronizar su propio catálogo de productos con el inventario de MarketHub, la plataforma debe permitir integrar ese sistema externo mediante adaptadores estándar."
 
 ```
