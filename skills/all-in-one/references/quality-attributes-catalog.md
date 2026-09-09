@@ -100,6 +100,22 @@ Para cada atributo: qué preguntar al usuario para elicitar escenarios reales, y
 | Respuesta | El sistema intercambia los datos correctamente / detecta incompatibilidad y la reporta |
 | Medida | % de intercambios exitosos, tiempo de detección de incompatibilidades |
 
+## Integrabilidad (Integrability)
+
+**Nota de distinción**: no confundir con interoperabilidad. La interoperabilidad mide el intercambio de datos con sistemas *externos* ya en producción; la integrabilidad mide el esfuerzo para *ensamblar/combinar* componentes o subsistemas (propios o de terceros) dentro de la arquitectura, típicamente en tiempo de desarrollo.
+
+**Preguntas de elicitación**: ¿Qué tan frecuentemente se incorporan nuevos componentes, servicios o subsistemas a la arquitectura? ¿Existen estándares o contratos de interfaz definidos (ej. API versionada, esquema de eventos) que faciliten la integración? ¿Qué tan acoplados están los componentes entre sí hoy?
+
+**Escenario general**:
+| Parte | Contenido |
+|---|---|
+| Fuente | Equipo de desarrollo / arquitecto |
+| Estímulo | Necesita incorporar un nuevo componente, servicio o subsistema a la arquitectura existente |
+| Artefacto | Los componentes involucrados y las interfaces/contratos que los conectan |
+| Entorno | Tiempo de diseño / desarrollo (no en producción) |
+| Respuesta | El nuevo componente se integra usando las interfaces definidas, sin requerir cambios extensos en los componentes ya existentes |
+| Medida | Esfuerzo (días-persona) para completar la integración, número de componentes existentes que debieron modificarse, número de interfaces no estándar creadas ad hoc |
+
 ## Escalabilidad (Scalability)
 
 **Preguntas de elicitación**: ¿Qué dimensión debe escalar (usuarios concurrentes, volumen de datos, número de transacciones)? ¿Se espera escalar de forma horizontal, vertical o ambas? ¿Cuál es el crecimiento proyectado y en qué plazo? ¿Debe escalar automáticamente o es aceptable una intervención manual?
