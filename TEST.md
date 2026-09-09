@@ -203,3 +203,54 @@ Utilidad (raíz)
 | 5 — Sincronización de catálogo de vendedores | Interoperabilidad | Media | Media | 3 |
 
 **Nota:** El Escenario 3 se marca como (Alta, Alta) porque combina alto impacto de negocio/legal (exposición de datos de tarjetas) con alta dificultad técnica (cumplimiento PCI-DSS, gestión de cifrado en múltiples capas), por lo que es el candidato prioritario para el análisis de arquitectura. Los valores de Importancia/Dificultad son una propuesta inicial razonada y deben validarse con los stakeholders del negocio y del equipo de seguridad.
+
+
+# Informe breve: Diferencias entre resultados obtenidos y esperados
+
+## 1. Nomenclatura del atributo de calidad (Escenario 1/A)
+
+**Diferencia:** El esperado usa "Integrabilidad" como atributo único; se usó "Modificabilidad / Interoperabilidad" combinados.
+
+**Por qué ocurre:** El catálogo de referencia utilizado (`quality-attributes-catalog.md`) no contempla "Integrabilidad" como categoría propia — es un término más usado en ingeniería de software en español para describir la facilidad de integrar sistemas externos, mientras que el estándar SEI/ATAM en inglés lo separa en Modificabilidad (costo de cambio) e Interoperabilidad (intercambio de datos entre sistemas).
+
+**Cómo solventarlo:** Agregar "Integrabilidad" como atributo explícito en el catálogo de referencia, con su propia plantilla de 6 partes, en vez de forzarlo como híbrido de otros dos.
+
+---
+
+## 2. Ubicación de la cuantificación en el estímulo (Escenario 4/B)
+
+**Diferencia:** El esperado pone el umbral numérico (">100 intentos/minuto") directamente en el **Estímulo**; en la versión obtenida se dejó solo en la **Medida de respuesta** (5 intentos/60s).
+
+**Por qué ocurre:** Son dos formas válidas de modelar el mismo problema: cuantificar el disparador (cuándo se activa la detección) vs. cuantificar el resultado esperado (qué tan rápido responde el sistema). Sin un ejemplo de referencia previo, se tomó la convención de dejar los números solo en la parte 6, que es donde el SEI exige obligatoriamente un criterio verificable.
+
+**Cómo solventarlo:** Aclarar en la skill que cuando el estímulo es *cuantificable por naturaleza* (volumen de tráfico, frecuencia de intentos), conviene poner el número también en el Estímulo, reservando la Medida de respuesta para el tiempo/calidad de la reacción del sistema — no solo para el volumen del disparador.
+
+---
+
+## 3. Nivel de agresividad de las métricas (200ms vs 60s, 8h vs 3 días)
+
+**Diferencia:** El esperado propone métricas mucho más estrictas (bloqueo en 200ms, adaptador reimplementado en 8h) que las obtenidas (60s, 3 días-persona).
+
+**Por qué ocurre:** Ninguno de los dos números viene de un SLA real del negocio — ambos son estimaciones. La diferencia refleja distintos supuestos implícitos sobre la madurez técnica del equipo y la infraestructura (ej. 200ms solo es alcanzable con un WAF o rate-limiter en el borde de red, no con lógica de aplicación). La versión obtenida fue conservadora y lo marcó explícitamente como supuesto; el esperado no marca la incertidumbre.
+
+**Cómo solventarlo:** Esto solo se resuelve con el dato real: preguntar al equipo de seguridad/infraestructura qué mecanismo de bloqueo van a usar (WAF, rate-limiter, lógica de app) antes de fijar el número, en vez de que se estime a ciegas.
+
+---
+
+## 4. Discrepancia en la valoración de Dificultad técnica (árbol de utilidad)
+
+**Diferencia:** Cifrado de datos: esperado = **M**, obtenido = **H**. Integración de pagos/logística: esperado = **H**, obtenido = **M**.
+
+**Por qué ocurre:** Son juicios subjetivos sin una rúbrica compartida de qué hace "difícil" un escenario. En la versión obtenida se pesó el cumplimiento normativo (PCI-DSS) como factor que eleva la dificultad del cifrado, y se asumió que el patrón adaptador ya resuelve gran parte del riesgo de integración. El esperado parece pesar más el control sobre el proveedor externo (fuera del alcance del equipo) como el verdadero factor de riesgo técnico, y trata el cifrado como una implementación más estandarizada/conocida.
+
+**Cómo solventarlo:** Definir una rúbrica explícita de Dificultad antes de puntuar (ej.: "H = requiere tecnología/proceso no dominado por el equipo o fuera de su control directo; M = solución conocida pero con esfuerzo de integración; L = patrón estándar ya implementado"). Sin esa rúbrica compartida, dos personas razonables llegan a valores distintos con el mismo escenario.
+
+---
+
+## 5. Formato de presentación del árbol de utilidad
+
+**Diferencia:** El esperado usa una tabla plana de 5 columnas (Atributo | Sub-atributo | Escenario consolidado | Prioridad-Negocio | Dificultad-Técnica); la versión obtenida usó un árbol anidado en Markdown más una tabla resumen aparte.
+
+**Por qué ocurre:** La skill deja el formato del árbol como "lista anidada por defecto" salvo que el usuario pida tabla, y en la versión obtenida se agregó la tabla resumen como complemento en vez de fusionar todo en un solo formato tabular como en el esperado.
+
+**Cómo solventarlo:** Ninguna corrección real de contenido — es preferencia de formato. Si este es el formato esperado por la organización/cátedra, conviene fijarlo como default en la skill (tabla de 5 columnas) en vez de árbol + tabla separada, para no generar diferencias de forma en cada entrega.
