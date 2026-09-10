@@ -2,6 +2,8 @@
 
 Resuelve el ejercicio 4 del TP3 de Atributos de Calidad: desarrollar una o más skills (estilo Claude) para generar escenarios de atributos de calidad (templates de 6 partes del SEI), chequear su completitud, y elaborar un árbol de utilidad.
 
+Esta rama (`main`) es el resultado de un merge crítico entre las 5 implementaciones individuales del grupo — no es la entrega de una sola persona. La sección "Procedencia del merge" más abajo detalla, pieza por pieza, qué se tomó de cada rama y por qué.
+
 ## Objetivo
 
 Encapsular en 3 Claude Skills reutilizables el proceso de diseño de atributos de calidad enseñado en la materia (template de 6 partes del SEI + árbol de utilidad), de forma que cualquier sistema nuevo pueda pasar por el mismo flujo — generar escenarios, verificar que estén bien formados, y priorizarlos — sin depender de rehacer el razonamiento manual cada vez. El conocimiento de base (teoría) y el conocimiento de proceso (errores comunes, criterios de aceptación, criterios de priorización) quedan separados y documentados en `shared/` y en `docs/` de cada skill, en vez de vivir solo en la cabeza de quien resuelve el TP, y se validan contra ejemplos conocidos (`tests-no-leer/`) tal como exige el enunciado.
@@ -189,7 +191,7 @@ Esta rama parte de la implementación original de `yaco` (formato Claude Skills,
 | Tabla de auditoría `Parte \| Estado ✅/⚠️/❌ \| Comentario` + regla dura de la Parte 6 (sin número/unidad no es ✅) | `rossi` | `chequear-completitud-escenario/SKILL.md` | Formato más legible y accionable que el veredicto binario simple que tenía `yaco`, sin cambiar el criterio de fondo (que ya exigía cuantificabilidad en `rubric-completitud.md`). |
 | Exigir justificar por qué se descarta un atributo confundible (no solo por qué se acepta el elegido) | `otaño` | `generar-escenarios-calidad/SKILL.md`, paso 1.2 | `otaño` es la única rama que explica en prosa por qué, por ejemplo, algo es Modificabilidad y no Interoperabilidad — hace la clasificación auditable en vez de una etiqueta sin razonamiento visible. |
 | Casos de test adversariales: requerimiento que mezcla 2 atributos, y atributo mal mapeado por el usuario | `mateo` | `tests-no-leer/caso-06-hospital-mezcla-atributos/`, `tests-no-leer/caso-07-chatbot-atributo-mal-mapeado/` | `yaco` no tenía casos diseñados para fallar a propósito, solo casos que confirman comportamiento correcto — estos dos ejercitan robustez ante inputs sucios. |
-| Caso MarketHub como benchmark cruzado (con la referencia del grupo como expected) | `mateo` / `rossi` / `otaño` (caso compartido) | `tests-no-leer/caso-05-marketHub-ecommerce/` | Ya estaba corrido y documentado en `informe-skill-yaco-recroa.md` §4 — se formaliza como caso de test permanente, con nota de la comparación de discrepancias contra `mateo` y contra la referencia. |
+| Caso MarketHub como benchmark cruzado (con la referencia del grupo como expected) | `mateo` / `rossi` / `otaño` (caso compartido) | `tests-no-leer/caso-05-marketHub-ecommerce/` | Ya estaba corrido y documentado en la rama `yaco` original — se formaliza acá como caso de test permanente, con nota de la comparación de discrepancias contra `mateo` y contra la referencia. |
 
 **Qué se descartó por completo, y por qué:**
 - **`fontana`** (rama entera): sin `SKILL.md`, sin bibliografía trazable, y con una regla explícita de aislamiento de contexto entre turnos que es incompatible con el flujo de 3 pasos encadenados que este repo necesita.
@@ -258,7 +260,7 @@ Cada `SKILL.md` referencia `shared/` con rutas relativas de 3 niveles (`../../..
 - `docs/condiciones/` y `docs/conocimiento/` de las 3 skills.
 - `tests-no-leer/` con 7 casos (28 archivos en total).
 - Los 3 `SKILL.md` con el cuerpo real de instrucciones, con todas las rutas relativas verificadas.
-- Repo commiteado y subido a la rama `yaco` del remoto del equipo.
+- Repo commiteado y subido a `main`, integrando el merge crítico de las 5 ramas individuales del grupo.
 - Los 8 tests originales de `tests-no-leer/` corridos contra las skills reales y comparados contra sus `*-expected.md`, con 2 ajustes reales aplicados a `SKILL.md`/`docs/` como resultado (ver "Resultados de testing y limitaciones conocidas").
 - Merge crítico de las 5 ramas del grupo aplicado sobre esta base (ver "Procedencia del merge"): compuertas de estado, chequeo de cobertura obligatorio, excepción de dependencias de terceros en priorización, tabla de auditoría por partes, justificación de descarte de atributo confundible, y 3 casos de test nuevos (MarketHub + 2 adversariales).
 
