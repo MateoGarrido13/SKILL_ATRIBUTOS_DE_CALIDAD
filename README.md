@@ -14,7 +14,7 @@ Esta rama (`main`) es el resultado de un merge crítico entre las 5 implementaci
 - De **`mateo`** se tomó la lógica de "no inventar y preguntar en su lugar" y el bloqueo que impide armar el árbol de utilidad si un escenario todavía no está validado — es el control más estricto contra que la skill invente datos.
 - De **`rossi`** se tomó la regla de que la Medida de la Respuesta solo cuenta si tiene un número o unidad concreta, con una tabla clara de qué partes están bien y cuáles no.
 - De **`otaño`** se tomó la costumbre de explicar por qué se elige un atributo de calidad y no otro parecido, en vez de asignarlo sin justificar.
-- De **`fontana`** no se tomó nada de estructura (no era una skill real, sino un prompt suelto), pero sirvió como punto de comparación de qué evitar.
+- De **`fontana`** se tomó la idea de clasificar primero qué tipo de pedido está haciendo el usuario (¿pide un escenario nuevo? ¿una revisión? ¿un árbol de utilidad?) antes de responder — ese mismo principio de clasificación es el que hoy define, en el `description` de cada una de las 3 skills, cuándo debe activarse cada una en vez de otra.
 - Se sumaron además casos de test nuevos (el de MarketHub y dos casos pensados para hacer fallar a la skill a propósito) para probar que el resultado final aguanta casos difíciles, no solo los fáciles.
 
 El detalle completo, con evidencia de cada decisión, está en la sección "Procedencia del merge".
