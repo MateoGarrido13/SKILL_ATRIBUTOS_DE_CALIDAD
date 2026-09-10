@@ -19,6 +19,13 @@ Esta rama (`main`) es el resultado de un merge crítico entre las 5 implementaci
 
 El detalle completo, con evidencia de cada decisión, está en la sección "Procedencia del merge".
 
+**Para ver el input/output real de cada skill individual** (y entender en concreto por qué se tomó cada decisión del merge), cada rama del grupo tiene un `.md` con el mismo caso de prueba (el sistema de e-commerce "MarketHub") corrido de punta a punta — prompt usado y respuesta completa de la skill, sin resumir:
+
+- `mateo` → `informe-branch-mateo/informe-garrido.md` (y el detalle turno a turno en `informe-branch-mateo/cursor_use_case_scenario_audit.md`)
+- `rossi` → `TEST.md`
+- `otaño` → `informe_skill.md`
+- `yaco` → `informe-skill-yaco-recroa.md` (rama `yaco`, no está en `main` por ser un informe individual — ver "Procedencia del merge")
+
 ## Objetivo
 
 Encapsular en 3 Claude Skills reutilizables el proceso de diseño de atributos de calidad enseñado en la materia (template de 6 partes del SEI + árbol de utilidad), de forma que cualquier sistema nuevo pueda pasar por el mismo flujo — generar escenarios, verificar que estén bien formados, y priorizarlos — sin depender de rehacer el razonamiento manual cada vez. El conocimiento de base (teoría) y el conocimiento de proceso (errores comunes, criterios de aceptación, criterios de priorización) quedan separados y documentados en `shared/` y en `docs/` de cada skill, en vez de vivir solo en la cabeza de quien resuelve el TP, y se validan contra ejemplos conocidos (`tests-no-leer/`) tal como exige el enunciado.
