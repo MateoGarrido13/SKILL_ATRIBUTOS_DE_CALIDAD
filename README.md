@@ -4,6 +4,21 @@ Resuelve el ejercicio 4 del TP3 de Atributos de Calidad: desarrollar una o más 
 
 Esta rama (`main`) es el resultado de un merge crítico entre las 5 implementaciones individuales del grupo — no es la entrega de una sola persona. La sección "Procedencia del merge" más abajo detalla, pieza por pieza, qué se tomó de cada rama y por qué.
 
+## Cómo se construyó
+
+1. **Cada integrante del grupo armó su propia skill por separado**, en su propia rama, con su propio criterio de diseño, estructura de carpetas y reglas.
+2. **Se testeó cada una** contra casos conocidos (algunos individuales, otros compartidos por todo el grupo, como el caso de e-commerce "MarketHub"), comparando outputs reales entre ramas.
+3. **Se hizo un merge crítico** tomando, de cada rama, lo que mejor funcionaba en la práctica — no una sola implementación completa, sino piezas puntuales de varias, combinadas sobre la base más completa (la de `yaco`, la única en formato Claude Skills nativo con mayor cobertura de casos).
+
+**Justificación simple de las decisiones del merge:**
+- De **`mateo`** se tomó la lógica de "no inventar y preguntar en su lugar" y el bloqueo que impide armar el árbol de utilidad si un escenario todavía no está validado — es el control más estricto contra que la skill invente datos.
+- De **`rossi`** se tomó la regla de que la Medida de la Respuesta solo cuenta si tiene un número o unidad concreta, con una tabla clara de qué partes están bien y cuáles no.
+- De **`otaño`** se tomó la costumbre de explicar por qué se elige un atributo de calidad y no otro parecido, en vez de asignarlo sin justificar.
+- De **`fontana`** no se tomó nada de estructura (no era una skill real, sino un prompt suelto), pero sirvió como punto de comparación de qué evitar.
+- Se sumaron además casos de test nuevos (el de MarketHub y dos casos pensados para hacer fallar a la skill a propósito) para probar que el resultado final aguanta casos difíciles, no solo los fáciles.
+
+El detalle completo, con evidencia de cada decisión, está en la sección "Procedencia del merge".
+
 ## Objetivo
 
 Encapsular en 3 Claude Skills reutilizables el proceso de diseño de atributos de calidad enseñado en la materia (template de 6 partes del SEI + árbol de utilidad), de forma que cualquier sistema nuevo pueda pasar por el mismo flujo — generar escenarios, verificar que estén bien formados, y priorizarlos — sin depender de rehacer el razonamiento manual cada vez. El conocimiento de base (teoría) y el conocimiento de proceso (errores comunes, criterios de aceptación, criterios de priorización) quedan separados y documentados en `shared/` y en `docs/` de cada skill, en vez de vivir solo en la cabeza de quien resuelve el TP, y se validan contra ejemplos conocidos (`tests-no-leer/`) tal como exige el enunciado.
