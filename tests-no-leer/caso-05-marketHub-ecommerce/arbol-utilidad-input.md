@@ -1,0 +1,13 @@
+# Caso 05 — MarketHub — input para `arbol-utilidad`
+
+5 escenarios ya generados y validados (`[ESTADO: VALIDADO]`), tal como los produjo esta skill en la corrida documentada en `informe-skill-yaco-recroa.md` (sección 4.1).
+
+1. Fuente: Un proveedor externo de pagos o logística (Mercado Pago, Stripe, PayPal, Andreani, DHL). Estímulo: El proveedor modifica su protocolo, API o SDK de integración. Artefacto: El módulo/adaptador de integración con pasarelas de pago y logística. Entorno: Sistema en operación normal (runtime), con el núcleo del e-commerce activo. Respuesta: El cambio se absorbe en la capa de integración sin afectar el núcleo ni las demás integraciones. Medida: menos de 5 días-persona de esfuerzo, 0 cambios en el núcleo, sin downtime del checkout.
+
+2. Fuente: Un cliente final que accede a la tienda online. Estímulo: El cliente abre la aplicación web desde un navegador o dispositivo distinto al usado en pruebas previas. Artefacto: La interfaz de usuario de la PWA de la tienda. Entorno: Operación normal, en cualquier combinación soportada de navegador/dispositivo. Respuesta: La interfaz se renderiza correctamente, sin errores visuales ni de layout. Medida: 0 defectos visuales bloqueantes en el 100% de las combinaciones soportadas, verificado en cada release.
+
+3. Fuente: Un atacante externo desconocido. Estímulo: Intento de acceder o exfiltrar datos de tarjetas de crédito y contraseñas. Artefacto: La base de datos de usuarios y el canal de comunicación cliente-servidor. Entorno: Sistema online, en operación normal. Respuesta: Los datos permanecen ilegibles para el atacante, cifrados en tránsito y en reposo, intento registrado. Medida: 0% de exposición en texto plano, TLS 1.2+/AES-256, detección en menos de 1 minuto.
+
+4. Fuente: Un usuario malintencionado. Estímulo: Intentos repetidos y fallidos de inicio de sesión (fuerza bruta) contra el panel de administración o una cuenta. Artefacto: El módulo de autenticación del panel y de cuentas de usuario. Entorno: Sistema online, en operación normal. Respuesta: El sistema bloquea temporalmente la cuenta o IP y registra el incidente. Medida: bloqueo tras 5 intentos fallidos en 1 minuto, detección en menos de 10 segundos, 100% de trazabilidad auditada.
+
+5. Fuente: Un vendedor externo (partner) con su propio sistema de catálogo. Estímulo: El partner solicita sincronizar su catálogo con el inventario de MarketHub. Artefacto: El módulo de integración de catálogos / adaptador de inventario. Entorno: Tiempo de integración (onboarding), sistema en operación. Respuesta: Se sincroniza el catálogo mediante un adaptador estándar sin modificar el núcleo del inventario. Medida: menos de 3 días-persona, 0 cambios en el código del núcleo.

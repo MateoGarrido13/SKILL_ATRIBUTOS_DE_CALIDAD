@@ -132,6 +132,70 @@ Convención de nombres dentro de cada caso: `<skill>-input.md` / `<skill>-expect
 
 Cómo se usa cada par en la práctica: se le da el `*-input.md` a la skill correspondiente (nunca la carpeta completa ni el `*-expected.md`), se compara manualmente el resultado contra el `*-expected.md`, y se evalúa si coinciden en contenido (no necesariamente carácter por carácter).
 
+## Resultados de testing y limitaciones conocidas
+
+Esta sección documenta la ronda de pruebas manuales corrida contra `tests-no-leer/` (8 tests) más las 3 iteraciones de ajuste sobre la skill de árbol de utilidad, cumpliendo el requisito del enunciado de que "la skill debe ser testeada con ejemplos conocidos".
+
+### 1. Metodología de testing
+
+Cada test se corrió con un pedido en lenguaje natural, sin mencionar el nombre de la skill ni su `SKILL.md`, dejando que Claude Code la activara sola por descripción (el mecanismo nativo de `.claude/skills/`). El output de cada corrida se comparó contra el `*-expected.md` correspondiente en `tests-no-leer/` — un archivo que la skill misma nunca lee, solo el evaluador humano. Varios tests se corrieron más de una vez, en subagentes con contexto aislado entre sí, específicamente para detectar variabilidad entre corridas y no quedarse con una sola muestra puntual.
+
+### 2. Tabla resumen de los 8 tests
+
+| Skill | Caso | Resultado | Notas |
+|---|---|---|---|
+| `generar-escenarios-calidad` | `caso-01-monopatines` (ambiguo) | Aceptable tras ajuste | ver limitación #1 |
+| `generar-escenarios-calidad` | `caso-02-sap-disponibilidad` | PASS | clasificación y redacción correctas sin que el input diera el atributo |
+| `generar-escenarios-calidad` | `caso-03-sap-performance` | PASS | ídem |
+| `chequear-completitud-escenario` | `caso-01-monopatines` | PASS | detectó además un problema de clasificación de base no anticipado (ver limitación #2) |
+| `chequear-completitud-escenario` | `caso-02-sap-disponibilidad` | PASS | detectó correctamente la medida no cuantificable |
+| `chequear-completitud-escenario` | `caso-03-sap-performance` | PASS | detectó falla en una parte distinta a la anticipada en el diseño del test (ver limitación #3) |
+| `arbol-utilidad` | `caso-01-monopatines` | PASS | prioridades justificadas, con variabilidad de criterio aceptable respecto a la referencia propia |
+| `arbol-utilidad` | `caso-04-sap-arbol-healthcare` | Parcial | ver limitación #4, comparado contra el benchmark externo (Tabla 19.1 del libro SAP) |
+
+### 3. Ajustes aplicados durante el testing
+
+En orden cronológico — solo los ajustes que efectivamente se aplicaron, no intentos descartados:
+
+1. **`.claude/skills/generar-escenarios-calidad/SKILL.md`** — se agregó una regla explícita anti-invención en el paso de clasificación del atributo, tras detectar que ante inputs ambiguos el modelo tendía a elegir la lectura más rica narrativamente en vez de la más anclada en evidencia textual.
+2. **`.claude/skills/arbol-utilidad/docs/conocimiento/criterio-priorizacion.md`** — se ajustó en 3 iteraciones: acotar el criterio de H técnico (tocar múltiples componentes ya no alcanza por sí solo), acotar la regla de desempate por "datos sensibles" (solo aplica cuando el escenario trata específicamente sobre proteger ese dato), y agregar un principio de comparación de evidencia cuantitativa relativa dentro del propio conjunto de escenarios. Resultado: mejora parcial, documentada en la limitación #4.
+
+### 4. Limitaciones conocidas
+
+**Limitación #1 — Ambigüedad en clasificación de atributo (`caso-01-monopatines`).** El input de monopatines admite más de una lectura válida de atributo de calidad (Interoperabilidad, Seguridad, Disponibilidad son todas defendibles). Tras el ajuste, la skill declara la ambigüedad y elige una lectura con evidencia textual real, pero el auto-chequeo de "no inventar una premisa" no es 100% confiable — en una corrida, la justificación final igual construyó un supuesto (concurrencia de uso) no explícito en el texto, aunque más sutil que antes del ajuste. Se documenta como comportamiento esperado ante inputs genuinamente ambiguos, no como bug.
+
+**Limitación #2 — `chequear-completitud-escenario` puede cuestionar la clasificación, no solo la completitud.** En `caso-01`, la skill fue más allá de evaluar las 6 partes y cuestionó si el atributo declarado (Disponibilidad) era el correcto para ese escenario, sugiriendo que podría ser Performance. Esto es coherente con que las condiciones de clasificación (`docs/condiciones/`) también aplican a esta skill, pero amplía el alcance de lo que un chequeo de completitud puede señalar más allá de lo originalmente previsto.
+
+**Limitación #3 — El criterio de "estímulo vago" es menos estricto de lo asumido al diseñar los tests.** En `caso-03`, se esperaba que la skill rechazara el estímulo "muchos usuarios usan el sistema al mismo tiempo" como vago; en cambio lo aceptó como válido y falló el escenario por la Respuesta. Sugiere que `docs/conocimiento/rubric-completitud.md` acepta un rango más amplio de especificidad en el Estímulo del que se asumió al diseñar el test.
+
+**Limitación #4 — Discrepancias con el benchmark externo del libro SAP (árbol de utilidad, caso healthcare).** Tras 3 iteraciones de ajuste sobre `criterio-priorizacion.md`, persisten discrepancias con las etiquetas H/M/L originales de la Tabla 19.1 del libro. La más estable: el escenario de upgrade de componente de terceros (COTS), donde el libro asigna (H, M) y la skill asigna consistentemente (M, H) en las 3 corridas — una inversión de qué eje es el crítico, no solo una diferencia de grado. El razonamiento de la skill es interno y consistente (prioriza esfuerzo cuantitativo en días-persona sobre riesgo de dependencia externa no controlada), pero no coincide con el criterio de los autores en este caso puntual. Se documenta como diferencia de heurística razonable entre dos criterios válidos, no como error de proceso — en el resto de los 13 escenarios del mismo test se logró coincidencia total o parcial.
+
+### 5. Pendiente
+
+- No se testeó la variante de `generar-escenarios-calidad` con **múltiples** atributos candidatos de evidencia igualmente fuerte (empate real, no solo ambigüedad con evidencia desigual) — los casos usados tenían siempre un candidato con anclaje más fuerte que otros.
+- No se automatizó la comparación output-vs-expected (todo el testing fue manual, corrida por corrida) — queda como mejora futura si se quisiera correr regresión automática ante cambios futuros al contenido de `shared/` o `docs/`.
+
+## Procedencia del merge — este repo como "nuevo main" del grupo
+
+Esta rama parte de la implementación original de `yaco` (formato Claude Skills, mayor cobertura de casos y único método de validación contra un benchmark externo) y le injerta piezas puntuales de las otras 4 ramas del grupo (`mateo`, `rossi`, `otaño`, `fontana`), elegidas por evidencia concreta encontrada al comparar outputs reales sobre el mismo caso (MarketHub) y contra el mismo benchmark del libro (Tabla 19.1). No es un `git merge` entre ramas — las estructuras de carpetas son incompatibles entre sí (`.claude/skills/` vs. `.cursor/rules/` vs. `skills/all-in-one/`) — es una reconstrucción dirigida sobre la base de `yaco`.
+
+| Injerto | Origen | Dónde quedó | Por qué |
+|---|---|---|---|
+| Estados `[ESTADO: BORRADOR]` / `[ESTADO: VALIDADO]` y veto binario (sin estado intermedio) | `mateo` | `chequear-completitud-escenario/SKILL.md`, `generar-escenarios-calidad/SKILL.md` | Es el único mecanismo *mecánico* (no solo una instrucción de buena fe) que impide tratar un escenario a medio validar como si estuviera terminado. Confirmado en la transcripción cruda de `mateo` (`cursor_use_case_scenario_audit.md`) que efectivamente frena y pregunta en vez de inventar. |
+| Compuerta dura en `arbol-utilidad`: no arma el árbol sin escenarios `[ESTADO: VALIDADO]` | `mateo` | `arbol-utilidad/SKILL.md`, paso 1 | En `yaco` el flujo de 3 pasos estaba documentado en el README pero no forzado — cualquiera podía saltar directo a priorizar sin pasar por el chequeo de completitud. |
+| Chequeo de cobertura contra el enunciado original, como bloqueo real (no solo nota) | `mateo`, corregido | `arbol-utilidad/SKILL.md`, paso 6 | En la corrida real de `mateo` sobre MarketHub, el escenario de cifrado de datos quedó afuera del árbol final y solo señalado como alerta — la propia rama que inventó el chequeo de cobertura no lo hizo obligatorio, y por eso el gap pasó igual. Acá se corrige esa falla. |
+| Regla "Fuente/Estímulo/Respuesta nunca se infieren, se pregunta con opciones concretas" + citar la respuesta del usuario textual en el sellado | `mateo` | `generar-escenarios-calidad/docs/conocimiento/heuristica-inferencia.md` | La transcripción cruda de `mateo` prueba que preguntar-en-vez-de-inventar funciona en la práctica, pero también expuso un hueco de auditabilidad (el archivo corta antes de la respuesta del usuario) — se agrega la obligación de citar la respuesta real para que el valor sellado sea verificable. |
+| Excepción de "dependencias de terceros no controladas" al criterio de priorización técnica | `mateo` | `arbol-utilidad/docs/conocimiento/criterio-priorizacion.md` | El "principio rector" original de `yaco` (la medida cuantitativa del propio escenario manda sobre la categoría) es la causa raíz documentada de un sesgo confirmado en dos sistemas independientes (Limitación #4 de este mismo README, y la comparación contra MarketHub en `tests-no-leer/caso-05-marketHub-ecommerce/`). En el cruce directo, la heurística de `mateo` coincidió exactamente con la referencia del grupo en los dos escenarios comparables de ese tipo; la de `yaco` no coincidió en ninguno. |
+| Tabla de auditoría `Parte \| Estado ✅/⚠️/❌ \| Comentario` + regla dura de la Parte 6 (sin número/unidad no es ✅) | `rossi` | `chequear-completitud-escenario/SKILL.md` | Formato más legible y accionable que el veredicto binario simple que tenía `yaco`, sin cambiar el criterio de fondo (que ya exigía cuantificabilidad en `rubric-completitud.md`). |
+| Exigir justificar por qué se descarta un atributo confundible (no solo por qué se acepta el elegido) | `otaño` | `generar-escenarios-calidad/SKILL.md`, paso 1.2 | `otaño` es la única rama que explica en prosa por qué, por ejemplo, algo es Modificabilidad y no Interoperabilidad — hace la clasificación auditable en vez de una etiqueta sin razonamiento visible. |
+| Casos de test adversariales: requerimiento que mezcla 2 atributos, y atributo mal mapeado por el usuario | `mateo` | `tests-no-leer/caso-06-hospital-mezcla-atributos/`, `tests-no-leer/caso-07-chatbot-atributo-mal-mapeado/` | `yaco` no tenía casos diseñados para fallar a propósito, solo casos que confirman comportamiento correcto — estos dos ejercitan robustez ante inputs sucios. |
+| Caso MarketHub como benchmark cruzado (con la referencia del grupo como expected) | `mateo` / `rossi` / `otaño` (caso compartido) | `tests-no-leer/caso-05-marketHub-ecommerce/` | Ya estaba corrido y documentado en `informe-skill-yaco-recroa.md` §4 — se formaliza como caso de test permanente, con nota de la comparación de discrepancias contra `mateo` y contra la referencia. |
+
+**Qué se descartó por completo, y por qué:**
+- **`fontana`** (rama entera): sin `SKILL.md`, sin bibliografía trazable, y con una regla explícita de aislamiento de contexto entre turnos que es incompatible con el flujo de 3 pasos encadenados que este repo necesita.
+- **`rossi/skills/generar-atributos-calidad/`**: duplicado sin resolver del propio `all-in-one` de esa misma rama — se tomó solo su regla de la Parte 6 y su formato de tabla, no la skill completa.
+- **El mecanismo de carpetas de estado de `mateo`** (`1-borradores/` → `2-escenarios/` → `3-arbol-utilidad/`): es específico de Cursor operando sobre un filesystem persistente entre turnos; en una skill conversacional de Claude el "sellado" se expresa con la marca `[ESTADO: VALIDADO]` en el propio texto de la respuesta, no con un archivo que cambia de carpeta.
+
 ## Estructura de carpetas completa
 
 ```
@@ -175,10 +239,13 @@ skill-tp-atributos-calidad/
 │   └── metodo-arbol-utilidad.md
 │
 └── tests-no-leer/
-    ├── caso-01-monopatines/          (6 archivos: generar/chequear/árbol × input/expected)
-    ├── caso-02-sap-disponibilidad/   (4 archivos: generar/chequear × input/expected)
-    ├── caso-03-sap-performance/      (4 archivos: generar/chequear × input/expected)
-    └── caso-04-sap-arbol-healthcare/ (2 archivos: árbol × input/expected)
+    ├── caso-01-monopatines/            (6 archivos: generar/chequear/árbol × input/expected)
+    ├── caso-02-sap-disponibilidad/     (4 archivos: generar/chequear × input/expected)
+    ├── caso-03-sap-performance/        (4 archivos: generar/chequear × input/expected)
+    ├── caso-04-sap-arbol-healthcare/   (2 archivos: árbol × input/expected — benchmark externo, Tabla 19.1 del libro)
+    ├── caso-05-marketHub-ecommerce/    (4 archivos: generar/árbol × input/expected — benchmark cruzado de grupo, de mateo/rossi/otaño)
+    ├── caso-06-hospital-mezcla-atributos/     (2 archivos: generar × input/expected — adversarial, de mateo)
+    └── caso-07-chatbot-atributo-mal-mapeado/  (2 archivos: generar × input/expected — adversarial, de mateo)
 ```
 
 Cada `SKILL.md` referencia `shared/` con rutas relativas de 3 niveles (`../../../shared/...`), porque `.claude/skills/<nombre>/SKILL.md` queda 3 carpetas por debajo de la raíz del repo. Las referencias a `docs/condiciones/` y `docs/conocimiento/` no llevan ese prefijo porque son hijas directas de cada skill, sin importar dónde esté ubicada.
@@ -189,12 +256,15 @@ Cada `SKILL.md` referencia `shared/` con rutas relativas de 3 niveles (`../../..
 - Estructura de carpetas y nombres definitivos (kebab-case), con las 3 skills reorganizadas al formato nativo `.claude/skills/<nombre>/` que Claude Code auto-detecta.
 - `shared/` con la base teórica de las 3 skills.
 - `docs/condiciones/` y `docs/conocimiento/` de las 3 skills.
-- `tests-no-leer/` con los 4 casos (16 archivos en total).
+- `tests-no-leer/` con 7 casos (28 archivos en total).
 - Los 3 `SKILL.md` con el cuerpo real de instrucciones, con todas las rutas relativas verificadas.
 - Repo commiteado y subido a la rama `yaco` del remoto del equipo.
+- Los 8 tests originales de `tests-no-leer/` corridos contra las skills reales y comparados contra sus `*-expected.md`, con 2 ajustes reales aplicados a `SKILL.md`/`docs/` como resultado (ver "Resultados de testing y limitaciones conocidas").
+- Merge crítico de las 5 ramas del grupo aplicado sobre esta base (ver "Procedencia del merge"): compuertas de estado, chequeo de cobertura obligatorio, excepción de dependencias de terceros en priorización, tabla de auditoría por partes, justificación de descarte de atributo confundible, y 3 casos de test nuevos (MarketHub + 2 adversariales).
 
 **Pendiente:**
-- Correr los 4 casos de `tests-no-leer/` contra las skills reales (invocarlas con cada `*-input.md` y comparar el resultado contra el `*-expected.md` correspondiente) para validar que coinciden.
+- Ver la sección "Resultados de testing y limitaciones conocidas" → punto 5 (variante de empate real entre atributos, y automatización de la comparación output-vs-expected).
+- Correr los 3 casos de test nuevos (`caso-05`, `caso-06`, `caso-07`) contra las skills ya editadas y documentar el resultado real, tal como se hizo con los primeros 8 — todavía no se repitió el ciclo completo de testing sobre las reglas recién agregadas por el merge.
 
 ## `.gitignore`
 
