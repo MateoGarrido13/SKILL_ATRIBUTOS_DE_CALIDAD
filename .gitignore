@@ -1,0 +1,19 @@
+# Material original (PDFs del libro, filminas, enunciados) - NO se sube al repo
+material-construccion/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporales / logs
+*.tmp
+*.log
+
+# Node (por si algún tooling auxiliar lo usa)
+node_modules/
+
+# Entornos / editores
+.env
+.vscode/
+.idea/
