@@ -10,8 +10,9 @@ Esta rama (`main`) es el resultado de un merge crítico entre las 5 implementaci
 2. **Se testeó cada una** contra casos conocidos (algunos individuales, otros compartidos por todo el grupo, como el caso de e-commerce "MarketHub"), comparando outputs reales entre ramas.
 3. **Se hizo un merge crítico** tomando, de cada rama, lo que mejor funcionaba en la práctica — no una sola implementación completa, sino piezas puntuales de varias, combinadas sobre la base más completa (la de `yaco`, la única en formato Claude Skills nativo con mayor cobertura de casos).
 
-**Justificación simple de las decisiones del merge:**
-- De **`mateo`** se tomó la lógica de "no inventar y preguntar en su lugar" y el bloqueo que impide armar el árbol de utilidad si un escenario todavía no está validado — es el control más estricto contra que la skill invente datos.
+**Justificación simple de las decisiones del merge (una cosa concreta de cada rama, ni más ni menos):**
+- De **`yaco`** se tomó la base completa sobre la que se armó todo lo demás: la estructura de las 3 skills en formato Claude nativo, la separación entre conocimiento base y reglas de proceso, y el método de testear no solo contra ejemplos propios sino contra un benchmark externo (un caso ya resuelto en el libro de la materia).
+- De **`mateo`** se tomó el pipeline de decisiones: la secuencia de compuertas que impide avanzar de un paso al siguiente si el anterior no está validado (no se prioriza un escenario si antes no pasó el chequeo de completitud), y la regla de "no inventar y preguntar en su lugar" cuando falta un dato clave.
 - De **`rossi`** se tomó la regla de que la Medida de la Respuesta solo cuenta si tiene un número o unidad concreta, con una tabla clara de qué partes están bien y cuáles no.
 - De **`otaño`** se tomó la costumbre de explicar por qué se elige un atributo de calidad y no otro parecido, en vez de asignarlo sin justificar.
 - De **`fontana`** se tomó la idea de clasificar primero qué tipo de pedido está haciendo el usuario (¿pide un escenario nuevo? ¿una revisión? ¿un árbol de utilidad?) antes de responder — ese mismo principio de clasificación es el que hoy define, en el `description` de cada una de las 3 skills, cuándo debe activarse cada una en vez de otra.
